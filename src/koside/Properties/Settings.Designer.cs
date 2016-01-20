@@ -25,13 +25,37 @@ namespace koside.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Batch")]
-        public global::ScintillaNET.Lexer Batch {
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string KSPLoc {
             get {
-                return ((global::ScintillaNET.Lexer)(this["Batch"]));
+                return ((string)(this["KSPLoc"]));
             }
             set {
-                this["Batch"] = value;
+                this["KSPLoc"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DarkMode {
+            get {
+                return ((bool)(this["DarkMode"]));
+            }
+            set {
+                this["DarkMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool FirstRun {
+            get {
+                return ((bool)(this["FirstRun"]));
+            }
+            set {
+                this["FirstRun"] = value;
             }
         }
     }

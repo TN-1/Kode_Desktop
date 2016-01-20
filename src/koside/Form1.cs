@@ -8,12 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScintillaNET;
+using System.IO;
 
 namespace koside
 {
     public partial class Form1 : Form
     {
         string file_name;
+        Color BackColorVar;
+        Color ForeColorVar;
+
         int lastCaretPos = 0;
 
         public Form1()
@@ -22,11 +26,42 @@ namespace koside
             WindowState = FormWindowState.Maximized;
             scintilla.Margins[0].Width = 16;
 
+            if (Properties.Settings.Default.DarkMode == true)
+            {
+                BackColorVar = Color.Gray;
+                ForeColorVar = Color.White;
+            }
+            else
+            {
+                BackColorVar = Color.White;
+                ForeColorVar = Color.Black;
+            }
+
+            var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var thispath = Path.Combine(perUserAppData, @"kode\kodecache.txt");
+            if (File.Exists(thispath))
+            {
+                System.IO.StreamReader objReader;
+                objReader = new System.IO.StreamReader(thispath);
+                scintilla.Text = objReader.ReadToEnd();
+                objReader.Close();
+                System.IO.File.WriteAllText(thispath, "");
+            }
+
+            menuStrip1.BackColor = BackColorVar;
+            menuStrip1.ForeColor = ForeColorVar;
+            statusStrip1.BackColor = BackColorVar;
+            statusStrip1.ForeColor = ForeColorVar;
+
+            
+
             // Configuring the default style with properties
             // we have common to every lexer style saves time.
             scintilla.StyleResetDefault();
             scintilla.Styles[Style.Default].Font = "Menlo";
             scintilla.Styles[Style.Default].Size = 10;
+            scintilla.Styles[Style.Default].BackColor = BackColorVar;
+            scintilla.Styles[Style.Default].ForeColor = ForeColorVar;
             scintilla.StyleClearAll();
 
             // Configure the CPP (C#) lexer styles
@@ -47,6 +82,7 @@ namespace koside
             scintilla.Styles[Style.BraceLight].BackColor = Color.LightGray;
             scintilla.Styles[Style.BraceLight].ForeColor = Color.BlueViolet;
             scintilla.Styles[Style.BraceBad].ForeColor = Color.Red;
+            scintilla.Styles[Style.LineNumber].BackColor = BackColorVar;
             scintilla.Lexer = Lexer.Cpp;
 
             // Set the keywords. 0 is functions, 1 is variables
@@ -76,7 +112,7 @@ namespace koside
             OpenFileDialog theDialog = new OpenFileDialog();
             theDialog.Title = "Open Script";
             theDialog.Filter = "kOS Scripts|*.ks";
-            theDialog.InitialDirectory = @"C:\";
+            theDialog.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
             if (theDialog.ShowDialog() == DialogResult.OK)
             {
                 file_name = theDialog.FileName.ToString();
@@ -126,6 +162,7 @@ namespace koside
             saveFileDialog1.Filter = "kOS Script Files|*.ks";
             saveFileDialog1.FilterIndex = 2;
             saveFileDialog1.RestoreDirectory = true;
+            saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
 
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -224,8 +261,43 @@ namespace koside
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            string test = Properties.Settings.Default.DarkMode.ToString();
             Form2 settings = new Form2();
             settings.ShowDialog();
+            if(Properties.Settings.Default.DarkMode.ToString() != test)
+            {
+                if(Properties.Settings.Default.DarkMode == true)
+                {
+                    MessageBox.Show("Dark mode");
+                    BackColorVar = Color.Gray;
+                    ForeColorVar = Color.White;
+                    DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                    if(result == DialogResult.OK)
+                    {
+                        var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                        var path = Path.Combine(perUserAppData, @"kode");
+                        System.IO.Directory.CreateDirectory(path);
+                        path += @"\kodecache.txt";
+                        System.IO.File.WriteAllText(path , scintilla.Text);
+                        Application.Restart();
+                    }
+                }else
+                {
+                    MessageBox.Show("Light Mode");
+                    BackColorVar = Color.White;
+                    ForeColorVar = Color.Black;
+                    DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                    if (result == DialogResult.OK)
+                    {
+                        var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                        var path = Path.Combine(perUserAppData, @"kode");
+                        System.IO.Directory.CreateDirectory(path);
+                        path += @"\kodecache.txt";
+                        System.IO.File.WriteAllText(path , scintilla.Text);
+                        Application.Restart();
+                    }
+                }
+            }
         }
 
         private void exportToKSPToolStripMenuItem_Click(object sender, EventArgs e)
@@ -236,7 +308,7 @@ namespace koside
             if (result == DialogResult.OK)
             {
                 string file = formname.name;
-                string location = Settings1.Default.KSPLoc + @"\Ships\Script\" + file;
+                string location = Properties.Settings.Default.KSPLoc + @"\Ships\Script\" + file;
                 System.IO.File.WriteAllText(location, scintilla.Text);
             }
         }
