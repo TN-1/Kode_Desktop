@@ -43,9 +43,12 @@ namespace koside
             if(comboBox1.Text == "Light Mode")
             {
                 Properties.Settings.Default.DarkMode = false;
-            }else
+                Properties.Settings.Default.Save();
+            }
+            else
             {
                 Properties.Settings.Default.DarkMode = true;
+                Properties.Settings.Default.Save();
             }
         }
     }

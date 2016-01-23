@@ -69,12 +69,15 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.scintilla.Location = new System.Drawing.Point(0, 27);
             this.scintilla.Name = "scintilla";
-            this.scintilla.Size = new System.Drawing.Size(638, 416);
+            this.scintilla.Size = new System.Drawing.Size(848, 560);
             this.scintilla.TabIndex = 0;
             this.scintilla.UseTabs = false;
             this.scintilla.CharAdded += new System.EventHandler<ScintillaNET.CharAddedEventArgs>(this.scintilla_CharAdded);
             this.scintilla.UpdateUI += new System.EventHandler<ScintillaNET.UpdateUIEventArgs>(this.scintilla_UpdateUI);
             this.scintilla.TextChanged += new System.EventHandler(this.scintilla_TextChanged);
+            this.scintilla.MouseEnter += new System.EventHandler(this.scintilla_MouseEnter);
+            this.scintilla.MouseLeave += new System.EventHandler(this.scintilla_MouseLeave);
+            this.scintilla.MouseMove += new System.Windows.Forms.MouseEventHandler(this.scintilla_MouseMove);
             // 
             // menuStrip1
             // 
@@ -86,7 +89,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(638, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(848, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -280,9 +283,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 446);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 590);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(638, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(848, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -296,7 +299,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(638, 468);
+            this.ClientSize = new System.Drawing.Size(848, 612);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.scintilla);
             this.Controls.Add(this.menuStrip1);

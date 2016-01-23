@@ -171,6 +171,9 @@
   <ItemGroup>
     <Content Include="jeb2.jpg" />
     <Content Include="monitor_minimal.ico" />
+    <Content Include="white-beam.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

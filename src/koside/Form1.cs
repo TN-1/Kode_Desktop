@@ -17,28 +17,32 @@ namespace koside
         string file_name;
         Color BackColorVar;
         Color ForeColorVar;
+        bool focus;
 
         int lastCaretPos = 0;
 
         public Form1()
         {
+            var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var thispath = Path.Combine(perUserAppData, @"kode\kodecache.txt");
+
             InitializeComponent();
             WindowState = FormWindowState.Maximized;
             scintilla.Margins[0].Width = 16;
 
+            //Setting our main colours based on light/dark mode seeting
             if (Properties.Settings.Default.DarkMode == true)
             {
-                BackColorVar = Color.Gray;
+                BackColorVar = Color.FromArgb(40,40,40);
                 ForeColorVar = Color.White;
             }
-            else
+            else if (Properties.Settings.Default.DarkMode == false)
             {
                 BackColorVar = Color.White;
                 ForeColorVar = Color.Black;
             }
 
-            var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var thispath = Path.Combine(perUserAppData, @"kode\kodecache.txt");
+            //Check to see if there is a previous session(Light-Dark mode transition)
             if (File.Exists(thispath))
             {
                 System.IO.StreamReader objReader;
@@ -52,29 +56,44 @@ namespace koside
             menuStrip1.ForeColor = ForeColorVar;
             statusStrip1.BackColor = BackColorVar;
             statusStrip1.ForeColor = ForeColorVar;
-
-            
+            BackColor = BackColorVar;
+            ForeColor = ForeColorVar;
 
             // Configuring the default style with properties
             // we have common to every lexer style saves time.
             scintilla.StyleResetDefault();
-            scintilla.Styles[Style.Default].Font = "Menlo";
+            scintilla.Styles[Style.Default].Font = "Manillo";
             scintilla.Styles[Style.Default].Size = 10;
             scintilla.Styles[Style.Default].BackColor = BackColorVar;
             scintilla.Styles[Style.Default].ForeColor = ForeColorVar;
             scintilla.StyleClearAll();
 
+            if (Properties.Settings.Default.DarkMode == true)
+            {
+                //DARK MODE SYNTAX HIGHLIGHTING SETTING
+                scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(87,166,74); // Green
+                scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.FromArgb(87, 166, 74); // Green
+                scintilla.Styles[Style.Cpp.Word].ForeColor = Color.FromArgb(38, 139, 210); //Blue
+                scintilla.Styles[Style.Cpp.String].ForeColor = Color.FromArgb(220, 50, 47); // Red
+                scintilla.Styles[Style.Cpp.Character].ForeColor = Color.FromArgb(220, 50, 47); // Red
+                scintilla.Styles[Style.Cpp.Verbatim].ForeColor = Color.FromArgb(220, 50, 47); // Red
+            }
+            else if (Properties.Settings.Default.DarkMode == false)
+            {
+                //LIGHT MODE SYNTAX HIGHLIGHTING SETTINGS
+                scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(0, 128, 0); // Green
+                scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.FromArgb(0, 128, 0); // Green
+                scintilla.Styles[Style.Cpp.Word].ForeColor = Color.Blue;
+                scintilla.Styles[Style.Cpp.String].ForeColor = Color.FromArgb(163, 21, 21); // Red
+                scintilla.Styles[Style.Cpp.Character].ForeColor = Color.FromArgb(163, 21, 21); // Red
+                scintilla.Styles[Style.Cpp.Verbatim].ForeColor = Color.FromArgb(163, 21, 21); // Red
+            }
+
             // Configure the CPP (C#) lexer styles
-            scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;
-            scintilla.Styles[Style.Cpp.Comment].ForeColor = Color.FromArgb(0, 128, 0); // Green
-            scintilla.Styles[Style.Cpp.CommentLine].ForeColor = Color.FromArgb(0, 128, 0); // Green
+            scintilla.Styles[Style.Cpp.Default].ForeColor = Color.Silver;            
             scintilla.Styles[Style.Cpp.CommentLineDoc].ForeColor = Color.FromArgb(128, 128, 128); // Gray
             scintilla.Styles[Style.Cpp.Number].ForeColor = Color.Olive;
-            scintilla.Styles[Style.Cpp.Word].ForeColor = Color.Blue;
             scintilla.Styles[Style.Cpp.Word2].ForeColor = Color.Magenta;
-            scintilla.Styles[Style.Cpp.String].ForeColor = Color.FromArgb(163, 21, 21); // Red
-            scintilla.Styles[Style.Cpp.Character].ForeColor = Color.FromArgb(163, 21, 21); // Red
-            scintilla.Styles[Style.Cpp.Verbatim].ForeColor = Color.FromArgb(163, 21, 21); // Red
             scintilla.Styles[Style.Cpp.StringEol].BackColor = Color.Pink;
             scintilla.Styles[Style.Cpp.Operator].ForeColor = Color.Purple;
             scintilla.Styles[Style.Cpp.Preprocessor].ForeColor = Color.Maroon;
@@ -88,6 +107,9 @@ namespace koside
             // Set the keywords. 0 is functions, 1 is variables
             scintilla.SetKeywords(0, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN");
             scintilla.SetKeywords(1, "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+            scintilla.CaretLineBackColor = Color.White;
+            scintilla.CaretForeColor = ForeColorVar;
+
         }
 
         private int maxLineNumberCharLength;
@@ -262,13 +284,13 @@ namespace koside
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string test = Properties.Settings.Default.DarkMode.ToString();
+
             Form2 settings = new Form2();
             settings.ShowDialog();
             if(Properties.Settings.Default.DarkMode.ToString() != test)
             {
                 if(Properties.Settings.Default.DarkMode == true)
                 {
-                    MessageBox.Show("Dark mode");
                     BackColorVar = Color.Gray;
                     ForeColorVar = Color.White;
                     DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
@@ -283,7 +305,6 @@ namespace koside
                     }
                 }else
                 {
-                    MessageBox.Show("Light Mode");
                     BackColorVar = Color.White;
                     ForeColorVar = Color.Black;
                     DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
@@ -371,19 +392,39 @@ namespace koside
             // Find the word start
             var currentPos = scintilla.CurrentPosition;
             var wordStartPos = scintilla.WordStartPosition(currentPos, true);
-
+            
             // Display the autocompletion list
             var lenEntered = currentPos - wordStartPos;
             if (lenEntered > 0)
             {
                 scintilla.AutoCShow(lenEntered, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
 
-            }
+            }            
         }
 
         private void helpToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Hey look, Another unimplemented feature");
+        }
+
+        private void scintilla_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Properties.Settings.Default.DarkMode == true)
+            {
+                if (focus == true)
+                this.Cursor = new Cursor("white-beam.cur");
+            }
+        }
+
+        private void scintilla_MouseEnter(object sender, EventArgs e)
+        {
+            focus = true;            
+        }
+
+        private void scintilla_MouseLeave(object sender, EventArgs e)
+        {
+            focus = false;
+            this.Cursor = Cursors.Default;
         }
     }
 }
