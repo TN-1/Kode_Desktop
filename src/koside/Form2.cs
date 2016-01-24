@@ -16,21 +16,20 @@ namespace koside
         public Form2()
         {
             InitializeComponent();
-            textBox1.Text = Settings1.Default.KSPLoc;
-            if(Settings1.Default.DarkMode == false)
+            textBox1.Text = Properties.Settings.Default.KSPLoc;
+            if(Properties.Settings.Default.DarkMode == false)
             {
                 comboBox1.Text = "Light Mode";
             }else
             {
-                //Redundent for now but meh, One less line for later.
                 comboBox1.Text = "Dark Mode";
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Settings1.Default.KSPLoc = textBox1.Text.ToString();
-            Settings1.Default.Save();
+            Properties.Settings.Default.KSPLoc = textBox1.Text.ToString();
+            Properties.Settings.Default.Save();
             this.Close();
         }
 
@@ -43,12 +42,13 @@ namespace koside
         {
             if(comboBox1.Text == "Light Mode")
             {
-                Settings1.Default.DarkMode = false;
-            }else
+                Properties.Settings.Default.DarkMode = false;
+                Properties.Settings.Default.Save();
+            }
+            else
             {
-                MessageBox.Show("Sorry, Not yet implemented :(");
-                //Uncomment when implemented
-                //Settings1.Default.DarkMode = true;
+                Properties.Settings.Default.DarkMode = true;
+                Properties.Settings.Default.Save();
             }
         }
     }
