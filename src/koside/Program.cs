@@ -32,7 +32,7 @@ namespace koside
                 {
                     MessageBox.Show("Whoops. Please visit Settings to fix it :)");
                 }
-                //Properties.Settings.Default.FirstRun = false;
+                Properties.Settings.Default.FirstRun = false;
             }
             Application.Run(new Form1());
         }

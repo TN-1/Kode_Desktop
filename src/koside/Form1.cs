@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScintillaNET;
 using System.IO;
+using System.Xml;
 
 namespace koside
 {
@@ -425,6 +426,63 @@ namespace koside
         {
             focus = false;
             this.Cursor = Cursors.Default;
+        }
+
+        private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Version newVersion = null;
+            string url = "";
+            XmlTextReader reader;
+            try
+            {
+                string xmlURL = "https://raw.githubusercontent.com/TN-1/Kode/master/resources/version.xml";
+                reader = new XmlTextReader(xmlURL);
+                reader.MoveToContent();
+                string elementName = "";
+                if ((reader.NodeType == XmlNodeType.Element) &&
+                    (reader.Name == "kode"))
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                            elementName = reader.Name;
+                        else
+                        {
+                            if ((reader.NodeType == XmlNodeType.Text) &&
+                                (reader.HasValue))
+                            {
+                                switch (elementName)
+                                {
+                                    case "version":
+                                        newVersion = new Version(reader.Value);
+                                        break;
+                                    case "url":
+                                        url = reader.Value;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            /*finally
+            {
+                if (reader != null) reader.Close();
+            } */
+            Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (curVersion.CompareTo(newVersion) < 0)
+            {
+                if (DialogResult.Yes ==
+                 MessageBox.Show(this, "Would you like to download?", "New Version Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                { 
+                    System.Diagnostics.Process.Start(url);
+                }
+            }
+
+
         }
     }
 }
