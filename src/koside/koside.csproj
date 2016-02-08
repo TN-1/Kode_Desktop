@@ -56,7 +56,7 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>monitor_minimal.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\monitor_minimal.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
@@ -138,20 +138,20 @@
       <DependentUpon>Form5.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -174,11 +174,26 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="jeb2.jpg" />
-    <Content Include="monitor_minimal.ico" />
-    <Content Include="white-beam.cur">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\CopyNight.png" />
+    <Content Include="Resources\Copy_6524.png" />
+    <None Include="Resources\CutNight.png" />
+    <Content Include="Resources\Cut_6523.png" />
+    <Content Include="Resources\jeb2.jpg" />
+    <Content Include="Resources\monitor_minimal.ico" />
+    <None Include="Resources\NewFileNight.png" />
+    <Content Include="Resources\NewFile_6276.png" />
+    <None Include="Resources\OpenNight.png" />
+    <Content Include="Resources\Open_6529.png" />
+    <None Include="Resources\PasteNight.png" />
+    <Content Include="Resources\Paste_6520.png" />
+    <None Include="Resources\RedoNight.png" />
+    <Content Include="Resources\Redo_16x.png" />
+    <None Include="Resources\SaveAllNight.png" />
+    <Content Include="Resources\Saveall_6518.png" />
+    <None Include="Resources\SaveNight.png" />
+    <Content Include="Resources\Save_6530.png" />
+    <None Include="Resources\UndoNight.png" />
+    <Content Include="Resources\Undo_16x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

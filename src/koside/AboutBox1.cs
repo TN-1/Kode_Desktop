@@ -11,6 +11,7 @@ namespace koside
 {
     partial class AboutBox1 : Form
     {
+        int i;
         public AboutBox1()
         {
             InitializeComponent();
@@ -100,5 +101,12 @@ namespace koside
             }
         }
         #endregion
+
+        private void logoPictureBox_Click(object sender, EventArgs e)
+        {
+            i++;
+            if (i == 3)
+                MessageBox.Show("Add more struts!", "Jeb says:");
+        }
     }
 }
