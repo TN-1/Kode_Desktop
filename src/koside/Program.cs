@@ -19,26 +19,71 @@ namespace koside
             Application.SetCompatibleTextRenderingDefault(false);
             if(Properties.Settings.Default.FirstRun == true)
             {
-                try
+                var drives = System.IO.DriveInfo.GetDrives();
+                if (drives.Where(data => data.Name == "Z:\\").Count() == 1)
                 {
-                    RegistryKey OurKey = Registry.LocalMachine;
-                    OurKey = OurKey.OpenSubKey(@"SOFTWARE\WOW6432Node\Valve", false);
-                    RegistryKey key = OurKey.OpenSubKey("Steam");
-                    string path = key.GetValue("InstallPath").ToString();
-                    DialogResult dialogResult = MessageBox.Show("Because this is the first time you have used Kode, We will see if we can find where Steam is installed. Is this correct?\n" + path, "Is this corrent?", MessageBoxButtons.YesNo);
-                    if (dialogResult == DialogResult.Yes)
+                    RegistryKey OurKey = Registry.CurrentUser;
+                    OurKey = OurKey.OpenSubKey(@"SOFTWARE\", false);
+                    RegistryKey key = OurKey.OpenSubKey("Wine");
+                    if (key != null)
                     {
-                        Properties.Settings.Default.KSPLoc = path + @"\steamapps\common\Kerbal Space Program";
+                        Properties.Settings.Default.KSPLoc = "This doesnt matter on Linux";
+                        Properties.Settings.Default.OS = "Linux";
                     }
                     else
                     {
-                        MessageBox.Show("Whoops. Please visit Settings to fix it :)");
+                        try
+                        {
+                            RegistryKey OurKeyi = Registry.LocalMachine;
+                            OurKeyi = OurKeyi.OpenSubKey(@"SOFTWARE\WOW6432Node\Valve", false);
+                            RegistryKey keyi = OurKeyi.OpenSubKey("Steam");
+                            string path = keyi.GetValue("InstallPath").ToString();
+                            DialogResult dialogResult = MessageBox.Show("Because this is the first time you have used Kode, We will see if we can find where Steam is installed. Is this correct?\n" + path, "Is this corrent?", MessageBoxButtons.YesNo);
+                            if (dialogResult == DialogResult.Yes)
+                            {
+                                Properties.Settings.Default.KSPLoc = path + @"\steamapps\common\Kerbal Space Program";
+                            }
+                            else
+                            {
+                                MessageBox.Show("Whoops. Please visit Settings to fix it :)");
+                            }
+                            Properties.Settings.Default.FirstRun = false;
+                            Properties.Settings.Default.OS = "Windows";
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Hello! There seems to be a problem finding where Steam is installed. Please go to settings to manually add. Error: 1");
+                            Properties.Settings.Default.FirstRun = false;
+                            Properties.Settings.Default.OS = "Windows";
+                        }
                     }
-                    Properties.Settings.Default.FirstRun = false;
-                }catch
+                }
+                else
                 {
-                    MessageBox.Show("Hello! There seems to be a problem finding where Steam is installed. Please go to settings to manually add. Error: 1");
-                    Properties.Settings.Default.FirstRun = false;
+                    try
+                    {
+                        RegistryKey OurKey = Registry.LocalMachine;
+                        OurKey = OurKey.OpenSubKey(@"SOFTWARE\WOW6432Node\Valve", false);
+                        RegistryKey key = OurKey.OpenSubKey("Steam");
+                        string path = key.GetValue("InstallPath").ToString();
+                        DialogResult dialogResult = MessageBox.Show("Because this is the first time you have used Kode, We will see if we can find where Steam is installed. Is this correct?\n" + path, "Is this corrent?", MessageBoxButtons.YesNo);
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            Properties.Settings.Default.KSPLoc = path + @"\steamapps\common\Kerbal Space Program";
+                        }
+                        else
+                        {
+                            MessageBox.Show("Whoops. Please visit Settings to fix it :)");
+                        }
+                        Properties.Settings.Default.FirstRun = false;
+                        Properties.Settings.Default.OS = "Windows";
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Hello! There seems to be a problem finding where Steam is installed. Please go to settings to manually add. Error: 1");
+                        Properties.Settings.Default.FirstRun = false;
+                        Properties.Settings.Default.OS = "Windows";
+                    }
                 }
             }
             Application.Run(new Form1());

@@ -158,8 +158,10 @@ namespace koside
                 saveFileDialog1.Filter = "kOS Script Files|*.ks";
                 saveFileDialog1.FilterIndex = 2;
                 saveFileDialog1.RestoreDirectory = true;
-                saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\"; 
-                
+                if (Properties.Settings.Default.OS == "Windows")
+                    saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                else if (Properties.Settings.Default.OS == "Linux")
+                    saveFileDialog1.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
@@ -323,7 +325,7 @@ namespace koside
 
         private void exportToKSPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            /* if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
             {
                 Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
                 //Export to KSP scripts folder.
@@ -335,7 +337,8 @@ namespace koside
                     string location = Properties.Settings.Default.KSPLoc + @"\Ships\Script\" + file;
                     System.IO.File.WriteAllText(location, body.Text);
                 }
-            }
+            }*/
+            MessageBox.Show("Feautre inentionally disabled. Please use save as instead");
         }
 
         private void licenceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -375,11 +378,6 @@ namespace koside
                     body.BeginUndoAction();
                 }
             }
-        }
-
-        private void helpToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Hey look, Another unimplemented feature");
         }
 
         private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
@@ -515,6 +513,38 @@ namespace koside
             Redo();
         }
 
+        private void wholeScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                //Save to same file as opened from
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                string s = body.Text;
+                s = "    " + s;
+                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
+                Clipboard.SetText(s);
+                MessageBox.Show("Scipt is now in your clipboard");
+            }
+        }
+
+        private void selectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                //Save to same file as opened from
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                string s = body.SelectedText;
+                s = "    " + s;
+                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
+                Clipboard.SetText(s);
+                MessageBox.Show("Selection is now in your clipboard");
+            }
+        }
+
         private void New()
         {
             try
@@ -634,7 +664,10 @@ namespace koside
                             saveFileDialog1.Filter = "kOS Script Files|*.ks";
                             saveFileDialog1.FilterIndex = 2;
                             saveFileDialog1.RestoreDirectory = true;
-                            saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                            if (Properties.Settings.Default.OS == "Windows")
+                                saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                            else if (Properties.Settings.Default.OS == "Linux")
+                                saveFileDialog1.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
 
                             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                             {
@@ -658,7 +691,10 @@ namespace koside
                     OpenFileDialog theDialog = new OpenFileDialog();
                     theDialog.Title = "Open Script";
                     theDialog.Filter = "kOS Scripts|*.ks";
-                    theDialog.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                    if (Properties.Settings.Default.OS == "Windows")
+                        theDialog.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                    else if (Properties.Settings.Default.OS == "Linux")
+                        theDialog.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
                     if (theDialog.ShowDialog() == DialogResult.OK)
                     {
                         int i = tabControl1.TabCount - 1;
@@ -685,7 +721,10 @@ namespace koside
                         OpenFileDialog theDialogi = new OpenFileDialog();
                         theDialogi.Title = "Open Script";
                         theDialogi.Filter = "kOS Scripts|*.ks";
-                        theDialogi.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                        if (Properties.Settings.Default.OS == "Windows")
+                            theDialogi.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                        else if (Properties.Settings.Default.OS == "Linux")
+                            theDialogi.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
                         if (theDialogi.ShowDialog() == DialogResult.OK)
                         {
                             int i = tabControl1.TabCount - 1;
@@ -706,7 +745,7 @@ namespace koside
             tabControl1.Refresh();
         }
 
-        public void addTab()
+        private void addTab()
         {
 
             TabPage tab = new TabPage("Untitled        X");
@@ -834,37 +873,6 @@ namespace koside
             }
         }
 
-        private void wholeScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = tabControl1.SelectedIndex;
-
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                //Save to same file as opened from
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                string s = body.Text;
-                s = "    " + s;
-                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
-                Clipboard.SetText(s);
-                MessageBox.Show("Scipt is now in your clipboard");
-            }
-        }
-
-        private void selectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = tabControl1.SelectedIndex;
-
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                //Save to same file as opened from
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                string s = body.SelectedText;
-                s = "    " + s;
-                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
-                Clipboard.SetText(s);
-                MessageBox.Show("Selection is now in your clipboard");
-            }
-        }
     }
 
     public class MySR : ToolStripSystemRenderer

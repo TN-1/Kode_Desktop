@@ -37,7 +37,7 @@ namespace koside.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool DarkMode {
             get {
                 return ((bool)(this["DarkMode"]));
@@ -56,6 +56,18 @@ namespace koside.Properties {
             }
             set {
                 this["FirstRun"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OS {
+            get {
+                return ((string)(this["OS"]));
+            }
+            set {
+                this["OS"] = value;
             }
         }
     }
