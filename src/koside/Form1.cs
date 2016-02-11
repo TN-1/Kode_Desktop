@@ -161,7 +161,7 @@ namespace koside
                 if (Properties.Settings.Default.OS == "Windows")
                     saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
                 else if (Properties.Settings.Default.OS == "Linux")
-                    saveFileDialog1.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
+                    saveFileDialog1.InitialDirectory = @"install/Ships/Scripts/";
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
@@ -667,7 +667,7 @@ namespace koside
                             if (Properties.Settings.Default.OS == "Windows")
                                 saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
                             else if (Properties.Settings.Default.OS == "Linux")
-                                saveFileDialog1.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
+                                saveFileDialog1.InitialDirectory = @"install/Ships/Scripts/";
 
                             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                             {
@@ -694,7 +694,7 @@ namespace koside
                     if (Properties.Settings.Default.OS == "Windows")
                         theDialog.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
                     else if (Properties.Settings.Default.OS == "Linux")
-                        theDialog.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
+                        theDialog.InitialDirectory = @"install/Ships/Scripts/";
                     if (theDialog.ShowDialog() == DialogResult.OK)
                     {
                         int i = tabControl1.TabCount - 1;
@@ -724,7 +724,7 @@ namespace koside
                         if (Properties.Settings.Default.OS == "Windows")
                             theDialogi.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
                         else if (Properties.Settings.Default.OS == "Linux")
-                            theDialogi.InitialDirectory = @"steam/steamapps/common/Kerbal Space Program/Ships/Scripts/";
+                            theDialogi.InitialDirectory = @"install/Ships/Scripts/";
                         if (theDialogi.ShowDialog() == DialogResult.OK)
                         {
                             int i = tabControl1.TabCount - 1;
