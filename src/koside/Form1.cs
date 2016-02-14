@@ -21,7 +21,7 @@ namespace koside
         List<int> charcount = new List<int>();
         Color BackColorVar;
         Color ForeColorVar;
-
+       
         int lastCaretPos = 0;
 
         public Form1()
@@ -136,38 +136,7 @@ namespace koside
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int i = tabControl1.SelectedIndex;
-            if (ismodified[i] == true)
-            {
-                ismodified[i] = false;
-                if (hasstar[i] == true)
-                {
-                    string s = tabControl1.SelectedTab.Text;
-                    s = s.Remove(s.Length - 11);
-                    s += "        X";
-                    tabControl1.SelectedTab.Text = s;
-                    hasstar[i] = false;
-                }
-            }
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                //Save as. Save to new file
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-
-                saveFileDialog1.Filter = "kOS Script Files|*.ks";
-                saveFileDialog1.FilterIndex = 2;
-                saveFileDialog1.RestoreDirectory = true;
-                if (Properties.Settings.Default.OS == "Windows")
-                    saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
-                else if (Properties.Settings.Default.OS == "Linux")
-                    saveFileDialog1.InitialDirectory = @"install/Ships/Scripts/";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
-                }
-
-            }
+            SaveAs();
         }
 
         private void scintilla_UpdateUI(object sender, UpdateUIEventArgs e)
@@ -610,6 +579,34 @@ namespace koside
         private void Save()
         {
             int i = tabControl1.SelectedIndex;
+            if (file_name[i] != null)
+            {
+                if (ismodified[i] == true)
+                {
+                    ismodified[i] = false;
+                    if (hasstar[i] == true)
+                    {
+                        string s = tabControl1.SelectedTab.Text;
+                        s = s.Remove(s.Length - 11);
+                        s += "        X";
+                        tabControl1.SelectedTab.Text = s;
+                        hasstar[i] = false;
+                    }
+                }
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                {
+                    //Save to same file as opened from
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                    System.IO.File.WriteAllText(file_name[i], body.Text);
+                }
+            }
+            else
+                SaveAs();
+        }
+
+        private void SaveAs()
+        {
+            int i = tabControl1.SelectedIndex;
             if (ismodified[i] == true)
             {
                 ismodified[i] = false;
@@ -624,9 +621,22 @@ namespace koside
             }
             if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
             {
-                //Save to same file as opened from
                 Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                System.IO.File.WriteAllText(file_name[i], body.Text);
+                //Save as. Save to new file
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+                saveFileDialog1.Filter = "kOS Script Files|*.ks";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                if (Properties.Settings.Default.OS == "Windows")
+                    saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
+                else if (Properties.Settings.Default.OS == "Linux")
+                    saveFileDialog1.InitialDirectory = @"install/Ships/Scripts/";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
+                }
+
             }
         }
 
