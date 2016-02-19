@@ -53,6 +53,9 @@
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.markupRedditToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.wholeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.minimiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,8 +81,8 @@
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.UndoButton = new System.Windows.Forms.ToolStripButton();
             this.RedoButton = new System.Windows.Forms.ToolStripButton();
-            this.wholeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripComboBox1 = new System.Windows.Forms.ToolStripComboBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -251,7 +254,8 @@
             // projectToolStripMenuItem
             // 
             this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportToolStripMenuItem});
+            this.exportToolStripMenuItem,
+            this.minimiseToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.projectToolStripMenuItem.Text = "Project";
@@ -261,7 +265,7 @@
             this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.markupRedditToolStripMenuItem});
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             this.exportToolStripMenuItem.Text = "Export";
             // 
             // markupRedditToolStripMenuItem
@@ -272,6 +276,27 @@
             this.markupRedditToolStripMenuItem.Name = "markupRedditToolStripMenuItem";
             this.markupRedditToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.markupRedditToolStripMenuItem.Text = "Markup(Reddit)";
+            // 
+            // wholeScriptToolStripMenuItem
+            // 
+            this.wholeScriptToolStripMenuItem.Name = "wholeScriptToolStripMenuItem";
+            this.wholeScriptToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.wholeScriptToolStripMenuItem.Text = "Whole Script";
+            this.wholeScriptToolStripMenuItem.Click += new System.EventHandler(this.wholeScriptToolStripMenuItem_Click);
+            // 
+            // selectionToolStripMenuItem
+            // 
+            this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
+            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.selectionToolStripMenuItem.Text = "Selection";
+            this.selectionToolStripMenuItem.Click += new System.EventHandler(this.selectionToolStripMenuItem_Click);
+            // 
+            // minimiseToolStripMenuItem
+            // 
+            this.minimiseToolStripMenuItem.Name = "minimiseToolStripMenuItem";
+            this.minimiseToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.minimiseToolStripMenuItem.Text = "Minimise";
+            this.minimiseToolStripMenuItem.Click += new System.EventHandler(this.minimiseToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -373,10 +398,6 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.NewButton,
@@ -390,11 +411,13 @@
             this.PasteButton,
             this.toolStripSeparator8,
             this.UndoButton,
-            this.RedoButton});
-            this.toolStrip1.Location = new System.Drawing.Point(9, 24);
+            this.RedoButton,
+            this.toolStripSeparator9,
+            this.toolStripComboBox1});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.ShowItemToolTips = false;
-            this.toolStrip1.Size = new System.Drawing.Size(228, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(848, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -503,19 +526,17 @@
             this.RedoButton.Text = "toolStripButton9";
             this.RedoButton.Click += new System.EventHandler(this.RedoButton_Click);
             // 
-            // wholeScriptToolStripMenuItem
+            // toolStripSeparator9
             // 
-            this.wholeScriptToolStripMenuItem.Name = "wholeScriptToolStripMenuItem";
-            this.wholeScriptToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.wholeScriptToolStripMenuItem.Text = "Whole Script";
-            this.wholeScriptToolStripMenuItem.Click += new System.EventHandler(this.wholeScriptToolStripMenuItem_Click);
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 25);
             // 
-            // selectionToolStripMenuItem
+            // toolStripComboBox1
             // 
-            this.selectionToolStripMenuItem.Name = "selectionToolStripMenuItem";
-            this.selectionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.selectionToolStripMenuItem.Text = "Selection";
-            this.selectionToolStripMenuItem.Click += new System.EventHandler(this.selectionToolStripMenuItem_Click);
+            this.toolStripComboBox1.Name = "toolStripComboBox1";
+            this.toolStripComboBox1.Size = new System.Drawing.Size(300, 25);
+            this.toolStripComboBox1.Text = "Current KSP install";
+            this.toolStripComboBox1.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // Form1
             // 
@@ -593,6 +614,9 @@
         private System.Windows.Forms.ToolStripMenuItem markupRedditToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem wholeScriptToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
+        private System.Windows.Forms.ToolStripMenuItem minimiseToolStripMenuItem;
     }
 }
 
