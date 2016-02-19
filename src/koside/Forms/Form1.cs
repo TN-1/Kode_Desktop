@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScintillaNET;
 using System.IO;
@@ -21,14 +16,11 @@ namespace koside
         List<int> charcount = new List<int>();
         Color BackColorVar;
         Color ForeColorVar;
-       
+        string CurrentInstall;
         int lastCaretPos = 0;
 
         public Form1()
         {
-            var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var thispath = Path.Combine(perUserAppData, @"kode\kodecache.txt");
-
             InitializeComponent();
             WindowState = FormWindowState.Maximized;
 
@@ -44,33 +36,27 @@ namespace koside
                 ForeColorVar = Color.Black;
             }
 
-            addTab();
             tabControl1.BackColor = BackColorVar;
             tabControl1.ForeColor = ForeColorVar;
-
-            //Check to see if there is a previous session(Light-Dark mode transition)
-            if (File.Exists(thispath))
-            {
-                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-                {
-                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                    System.IO.StreamReader objReader;
-                    objReader = new System.IO.StreamReader(thispath);
-                    body.Text = objReader.ReadToEnd();
-                    objReader.Close();
-                    System.IO.File.WriteAllText(thispath, "");
-                }
-            }
 
             menuStrip1.BackColor = BackColorVar;
             menuStrip1.ForeColor = ForeColorVar;
             statusStrip1.BackColor = BackColorVar;
             statusStrip1.ForeColor = ForeColorVar;
             toolStrip1.BackColor = BackColorVar;
+            toolStripComboBox1.BackColor = BackColorVar;
+            toolStripComboBox1.ForeColor = ForeColorVar;
             BackColor = BackColorVar;
             ForeColor = ForeColorVar;
 
             toolStrip1.Renderer = new MySR();
+
+            foreach (String install in Properties.Settings.Default.KSPLoc)
+            {
+                toolStripComboBox1.Items.Add(install);
+            }
+            toolStripComboBox1.SelectedIndex = 0;
+            CurrentInstall = Properties.Settings.Default.KSPLoc[0];
 
             if (Properties.Settings.Default.DarkMode == true)
             {
@@ -96,6 +82,12 @@ namespace koside
                 UndoButton.Image = Properties.Resources.Undo;
                 RedoButton.Image = Properties.Resources.Redo;
             }
+
+            //Check to see if there is a previous session(Light-Dark mode transition)
+            if (File.Exists("KodeCache.xml"))
+                RestoreSession();
+            else
+                addTab();
         }
 
         private void scintilla_TextChanged(object sender, EventArgs e)
@@ -252,11 +244,12 @@ namespace koside
             if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
             {
                 Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                string test = Properties.Settings.Default.DarkMode.ToString();
+                bool test = Properties.Settings.Default.DarkMode;
+                bool othertest = Properties.Settings.Default.Uppercase;
 
                 Form2 settings = new Form2();
                 settings.ShowDialog();
-                if (Properties.Settings.Default.DarkMode.ToString() != test)
+                if (Properties.Settings.Default.DarkMode != test)
                 {
                     if (Properties.Settings.Default.DarkMode == true)
                     {
@@ -265,11 +258,7 @@ namespace koside
                         DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
                         if (result == DialogResult.OK)
                         {
-                            var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                            var path = Path.Combine(perUserAppData, @"kode");
-                            System.IO.Directory.CreateDirectory(path);
-                            path += @"\kodecache.txt";
-                            System.IO.File.WriteAllText(path, body.Text);
+                            createXML();
                             Application.Restart();
                         }
                     }
@@ -280,15 +269,27 @@ namespace koside
                         DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
                         if (result == DialogResult.OK)
                         {
-                            var perUserAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                            var path = Path.Combine(perUserAppData, @"kode");
-                            System.IO.Directory.CreateDirectory(path);
-                            path += @"\kodecache.txt";
-                            System.IO.File.WriteAllText(path, body.Text);
+                            createXML();
                             Application.Restart();
                         }
                     }
                 }
+                if(Properties.Settings.Default.Uppercase != othertest)
+                {
+                    DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                    if (result == DialogResult.OK)
+                    {
+                        createXML();
+                        Application.Restart();
+                    }
+                }
+
+                toolStripComboBox1.Items.Clear();
+                foreach (String s in Properties.Settings.Default.KSPLoc)
+                {
+                    toolStripComboBox1.Items.Add(s);
+                }
+                toolStripComboBox1.SelectedIndex = 0;
             }
         }
 
@@ -324,7 +325,7 @@ namespace koside
                 ismodified[i] = true;
 
             charcount[i]++;
-            
+
             if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
             {
                 Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
@@ -337,10 +338,13 @@ namespace koside
                 var lenEntered = currentPos - wordStartPos;
                 if (lenEntered > 0)
                 {
-                    body.AutoCShow(lenEntered, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+                    if(Properties.Settings.Default.Uppercase == true)
+                        body.AutoCShow(lenEntered, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+                    else
+                        body.AutoCShow(lenEntered, "add all at batch break clearscreen compile copy declare delete deploy do do edit else file for from from function global if in list local lock log off on once parameter preserve print reboot remove rename run set shutdown stage step switch then to toggle unlock unset until volume wait when heading prograde retrograde facing maxthrust velocity geoposition latitude longitude up north body angularmomentum angularvel angularvelocity commrange mass verticalspeed groundspeed airespeed vesselname altitude apoapsis periapsis sensors srfprograde srfrerograde obt status shipname");
                 }
 
-                if(charcount[i] == 10)
+                if (charcount[i] == 10)
                 {
                     charcount[i] = 0;
                     body.EndUndoAction();
@@ -351,56 +355,7 @@ namespace koside
 
         private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Version newVersion = null;
-            string url = "https://github.com/TN-1/Kode/releases";
-            XmlTextReader reader;
-            try
-            {
-                string xmlURL = "https://raw.githubusercontent.com/TN-1/Kode/master/resources/version.xml";
-                reader = new XmlTextReader(xmlURL);
-                reader.MoveToContent();
-                string elementName = "";
-                if ((reader.NodeType == XmlNodeType.Element) &&
-                    (reader.Name == "kode"))
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.NodeType == XmlNodeType.Element)
-                            elementName = reader.Name;
-                        else
-                        {
-                            if ((reader.NodeType == XmlNodeType.Text) &&
-                                (reader.HasValue))
-                            {
-                                switch (elementName)
-                                {
-                                    case "version":
-                                        newVersion = new Version(reader.Value);
-                                        break;
-                                    case "url":
-                                        url = reader.Value;
-                                        break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
-            Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            if (curVersion.CompareTo(newVersion) < 0)
-            {
-                if (DialogResult.Yes ==
-                 MessageBox.Show(this, "Would you like to download?", "New Version Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
-                { 
-                    System.Diagnostics.Process.Start(url);
-                }
-            }else
-            {
-                MessageBox.Show("Kode is up to date", "No new version");
-            }
+            CheckUpdate(false);
         }
 
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
@@ -511,6 +466,57 @@ namespace koside
                 s = s.Replace(System.Environment.NewLine, "  \r\n    ");
                 Clipboard.SetText(s);
                 MessageBox.Show("Selection is now in your clipboard");
+            }
+        }
+
+        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CurrentInstall != toolStripComboBox1.SelectedItem.ToString())
+            {
+                CurrentInstall = toolStripComboBox1.SelectedItem.ToString();
+                Properties.Settings.Default.KSPLoc.Remove(CurrentInstall);
+                Properties.Settings.Default.KSPLoc.Insert(0, CurrentInstall);
+                toolStripComboBox1.Items.Clear();
+                foreach (String s in Properties.Settings.Default.KSPLoc)
+                {
+                    toolStripComboBox1.Items.Add(s);
+                }
+                toolStripComboBox1.SelectedIndex = 0;
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void minimiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+            if (ismodified[i] == true)
+            {
+                ismodified[i] = false;
+                if (hasstar[i] == true)
+                {
+                    string s = tabControl1.SelectedTab.Text;
+                    s = s.Remove(s.Length - 11);
+                    s += "        X";
+                    tabControl1.SelectedTab.Text = s;
+                    hasstar[i] = false;
+                }
+            }
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "kOS Script Files|*.ks";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                saveFileDialog1.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
+                saveFileDialog1.FileName = "MinimisedScript";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), Minimiser.Minimise(body.Text));
+                    file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
+                    tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                }
             }
         }
 
@@ -625,16 +631,15 @@ namespace koside
                 //Save as. Save to new file
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
-                saveFileDialog1.Filter = "kOS Script Files|*.ks";
+                saveFileDialog1.Filter = "kOS Scripts|*.ks";
                 saveFileDialog1.FilterIndex = 2;
                 saveFileDialog1.RestoreDirectory = true;
-                if (Properties.Settings.Default.OS == "Windows")
-                    saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
-                else if (Properties.Settings.Default.OS == "Linux")
-                    saveFileDialog1.InitialDirectory = @"install/Ships/Scripts/";
+                saveFileDialog1.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
+                    file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
+                    tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
                 }
 
             }
@@ -644,6 +649,7 @@ namespace koside
         {
             for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
             {
+                tabControl1.SelectedIndex = i;
                 if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
                 {
                     Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
@@ -662,27 +668,11 @@ namespace koside
 
                         if (file_name[i] != null)
                         {
-                            //Save to same file as opened from
-                            System.IO.File.WriteAllText(file_name[i], body.Text);
+                            Save();
                         }
                         else
                         {
-                            tabControl1.SelectedIndex = i;
-
-                            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-
-                            saveFileDialog1.Filter = "kOS Script Files|*.ks";
-                            saveFileDialog1.FilterIndex = 2;
-                            saveFileDialog1.RestoreDirectory = true;
-                            if (Properties.Settings.Default.OS == "Windows")
-                                saveFileDialog1.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
-                            else if (Properties.Settings.Default.OS == "Linux")
-                                saveFileDialog1.InitialDirectory = @"install/Ships/Scripts/";
-
-                            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                            {
-                                System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
-                            }
+                            SaveAs();
                         }
                     }
                 }
@@ -701,17 +691,14 @@ namespace koside
                     OpenFileDialog theDialog = new OpenFileDialog();
                     theDialog.Title = "Open Script";
                     theDialog.Filter = "kOS Scripts|*.ks";
-                    if (Properties.Settings.Default.OS == "Windows")
-                        theDialog.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
-                    else if (Properties.Settings.Default.OS == "Linux")
-                        theDialog.InitialDirectory = @"install/Ships/Scripts/";
+                    theDialog.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                     if (theDialog.ShowDialog() == DialogResult.OK)
                     {
                         int i = tabControl1.TabCount - 1;
                         file_name[i] = theDialog.FileName.ToString();
 
-                        System.IO.StreamReader objReader;
-                        objReader = new System.IO.StreamReader(file_name[i]);
+                        StreamReader objReader;
+                        objReader = new StreamReader(file_name[i]);
 
                         body.Text = objReader.ReadToEnd();
                         objReader.Close();
@@ -731,10 +718,7 @@ namespace koside
                         OpenFileDialog theDialogi = new OpenFileDialog();
                         theDialogi.Title = "Open Script";
                         theDialogi.Filter = "kOS Scripts|*.ks";
-                        if (Properties.Settings.Default.OS == "Windows")
-                            theDialogi.InitialDirectory = Properties.Settings.Default.KSPLoc + @"\Ships\Script\";
-                        else if (Properties.Settings.Default.OS == "Linux")
-                            theDialogi.InitialDirectory = @"install/Ships/Scripts/";
+                        theDialogi.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                         if (theDialogi.ShowDialog() == DialogResult.OK)
                         {
                             int i = tabControl1.TabCount - 1;
@@ -815,8 +799,16 @@ namespace koside
             body.Lexer = Lexer.Cpp;
 
             // Set the keywords. 0 is functions, 1 is variables
-            body.SetKeywords(0, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN");
-            body.SetKeywords(1, "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+            if (Properties.Settings.Default.Uppercase == true)
+            {
+                body.SetKeywords(0, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN");
+                body.SetKeywords(1, "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+            }
+            else if (Properties.Settings.Default.Uppercase == false)
+            {
+                body.SetKeywords(0, "add all at batch break clearscreen compile copy declare delete deploy do do edit else file for from from function global if in list local lock log off on once parameter preserve print reboot remove rename run set shutdown stage step switch then to toggle unlock unset until volume wait when");
+                body.SetKeywords(1, "heading prograde retrograde facing maxthrust velocity geoposition latitude longitude up north body angularmomentum angularvel angularvelocity commrange mass verticalspeed groundspeed airespeed vesselname altitude apoapsis periapsis sensors srfprograde srfrerograde obt status shipname");
+            }
             body.CaretLineBackColor = Color.White;
             body.CaretForeColor = ForeColorVar;
 
@@ -883,9 +875,139 @@ namespace koside
             }
         }
 
+        static public void CheckUpdate(bool IsSilent)
+        {
+            Version newVersion = null;
+            string url = "https://github.com/TN-1/Kode/releases";
+            XmlTextReader reader;
+            try
+            {
+                string xmlURL = "https://raw.githubusercontent.com/TN-1/Kode/master/resources/version.xml";
+                reader = new XmlTextReader(xmlURL);
+                reader.MoveToContent();
+                string elementName = "";
+                if ((reader.NodeType == XmlNodeType.Element) &&
+                    (reader.Name == "kode"))
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                            elementName = reader.Name;
+                        else
+                        {
+                            if ((reader.NodeType == XmlNodeType.Text) &&
+                                (reader.HasValue))
+                            {
+                                switch (elementName)
+                                {
+                                    case "version":
+                                        newVersion = new Version(reader.Value);
+                                        break;
+                                    case "url":
+                                        url = reader.Value;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            if (curVersion.CompareTo(newVersion) < 0)
+            {
+                if (DialogResult.Yes ==
+                 MessageBox.Show("Would you like to download?", "New Version Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
+                {
+                    System.Diagnostics.Process.Start(url);
+                }
+            }
+            else
+            {
+                if (!IsSilent)
+                    MessageBox.Show("Kode is up to date", "No new version");
+            }
+        }
+
+        private void createXML()
+        {
+            XmlTextWriter writer = new XmlTextWriter("KodeCache.xml", System.Text.Encoding.UTF8);
+            writer.WriteStartDocument(true);
+            writer.Formatting = Formatting.Indented;
+            writer.Indentation = 2;
+            writer.WriteStartElement("Kode_Cache");
+            for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
+            {
+                tabControl1.SelectedIndex = i;
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                {
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                    createNode(tabControl1.SelectedIndex.ToString(), tabControl1.SelectedTab.Text, body.Text, writer);
+                }
+            }
+            writer.WriteEndElement();
+            writer.WriteEndDocument();
+            writer.Close();
+        }
+
+        private void createNode(string tID, string tTitle, string tText, XmlTextWriter writer)
+        {
+            writer.WriteStartElement("Tab");
+            writer.WriteStartElement("Tab_Index");
+            writer.WriteString(tID);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Tab_Title");
+            writer.WriteString(tTitle);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Tab_Text");
+            writer.WriteString(tText);
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        private void RestoreSession()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(@"KodeCache.xml");
+
+            XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Kode_Cache/Tab");
+
+            List<TabRestore> tabs = new List<TabRestore>();
+
+            foreach (XmlNode node in nodes)
+            {
+                TabRestore tab = new TabRestore();
+
+                tab.index = Convert.ToInt32(node.SelectSingleNode("Tab_Index").InnerText);
+                tab.title = node.SelectSingleNode("Tab_Title").InnerText;
+                tab.text = node.SelectSingleNode("Tab_Text").InnerText;
+
+                tabs.Add(tab);
+            }
+
+            foreach (TabRestore tab in tabs)
+            {
+                addTab();
+                tabControl1.SelectedIndex = tab.index;
+                if(tab.title != null)
+                    tabControl1.SelectedTab.Text = tab.title;
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                {
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                    if(tab.title != null)
+                        body.Text = tab.text;
+                }
+            }
+
+            tabControl1.SelectedIndex = 0;
+            File.Delete("KodeCache.xml");
+        }
+
     }
 
-    public class MySR : ToolStripSystemRenderer
+    class MySR : ToolStripSystemRenderer
     {
         public MySR() { }
 
@@ -895,4 +1017,10 @@ namespace koside
         }
     }
 
+    class TabRestore
+    {
+        public int index;
+        public string title;
+        public string text;
+    }
 }

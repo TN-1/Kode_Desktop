@@ -13,7 +13,7 @@ namespace koside.Properties {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
@@ -25,10 +25,9 @@ namespace koside.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string KSPLoc {
+        public global::System.Collections.Generic.List<System.String> KSPLoc {
             get {
-                return ((string)(this["KSPLoc"]));
+                return ((global::System.Collections.Generic.List<System.String>)(this["KSPLoc"]));
             }
             set {
                 this["KSPLoc"] = value;
@@ -68,6 +67,18 @@ namespace koside.Properties {
             }
             set {
                 this["OS"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool Uppercase {
+            get {
+                return ((bool)(this["Uppercase"]));
+            }
+            set {
+                this["Uppercase"] = value;
             }
         }
     }
