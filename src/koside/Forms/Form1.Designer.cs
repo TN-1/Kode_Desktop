@@ -56,6 +56,7 @@
             this.wholeScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.minimiseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importLibraryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -255,7 +256,8 @@
             // 
             this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exportToolStripMenuItem,
-            this.minimiseToolStripMenuItem});
+            this.minimiseToolStripMenuItem,
+            this.importLibraryToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.projectToolStripMenuItem.Text = "Project";
@@ -265,7 +267,7 @@
             this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.markupRedditToolStripMenuItem});
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exportToolStripMenuItem.Text = "Export";
             // 
             // markupRedditToolStripMenuItem
@@ -294,9 +296,15 @@
             // minimiseToolStripMenuItem
             // 
             this.minimiseToolStripMenuItem.Name = "minimiseToolStripMenuItem";
-            this.minimiseToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
+            this.minimiseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.minimiseToolStripMenuItem.Text = "Minimise";
             this.minimiseToolStripMenuItem.Click += new System.EventHandler(this.minimiseToolStripMenuItem_Click);
+            // 
+            // importLibraryToolStripMenuItem
+            // 
+            this.importLibraryToolStripMenuItem.Name = "importLibraryToolStripMenuItem";
+            this.importLibraryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importLibraryToolStripMenuItem.Text = "Import Library";
             // 
             // toolsToolStripMenuItem
             // 
@@ -617,6 +625,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox1;
         private System.Windows.Forms.ToolStripMenuItem minimiseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importLibraryToolStripMenuItem;
     }
 }
 
