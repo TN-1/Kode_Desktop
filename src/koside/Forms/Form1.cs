@@ -688,62 +688,69 @@ namespace koside
 
         private void Open()
         {
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-
-                if (tabControl1.TabCount == 1 && body.TextLength == 0)
+            try {
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
                 {
-                    //Open a file
-                    OpenFileDialog theDialog = new OpenFileDialog();
-                    theDialog.Title = "Open Script";
-                    theDialog.Filter = "kOS Scripts|*.ks";
-                    theDialog.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
-                    if (theDialog.ShowDialog() == DialogResult.OK)
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                    if (tabControl1.TabCount == 1 && body.TextLength == 0)
                     {
-                        int i = tabControl1.TabCount - 1;
-                        file_name[i] = theDialog.FileName.ToString();
-
-                        StreamReader objReader;
-                        objReader = new StreamReader(file_name[i]);
-
-                        body.Text = objReader.ReadToEnd();
-                        objReader.Close();
-
-                        this.Text = file_name[i] + " - Kode";
-                        tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
-                    }
-                }
-                else
-                {
-                    addTab();
-                    if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-                    {
-                        Scintilla bodyi = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-
                         //Open a file
-                        OpenFileDialog theDialogi = new OpenFileDialog();
-                        theDialogi.Title = "Open Script";
-                        theDialogi.Filter = "kOS Scripts|*.ks";
-                        theDialogi.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
-                        if (theDialogi.ShowDialog() == DialogResult.OK)
+                        OpenFileDialog theDialog = new OpenFileDialog();
+                        theDialog.Title = "Open Script";
+                        theDialog.Filter = "kOS Scripts|*.ks";
+                        theDialog.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
+                        if (theDialog.ShowDialog() == DialogResult.OK)
                         {
                             int i = tabControl1.TabCount - 1;
-                            file_name[i] = theDialogi.FileName.ToString();
+                            file_name[i] = theDialog.FileName.ToString();
 
-                            System.IO.StreamReader objReader;
-                            objReader = new System.IO.StreamReader(file_name[i]);
+                            StreamReader objReader;
+                            objReader = new StreamReader(file_name[i]);
 
-                            bodyi.Text = objReader.ReadToEnd();
+                            body.Text = objReader.ReadToEnd();
                             objReader.Close();
 
                             this.Text = file_name[i] + " - Kode";
                             tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
                         }
                     }
+                    else
+                    {
+                        addTab();
+                        if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                        {
+                            Scintilla bodyi = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                            //Open a file
+                            OpenFileDialog theDialogi = new OpenFileDialog();
+                            theDialogi.Title = "Open Script";
+                            theDialogi.Filter = "kOS Scripts|*.ks";
+                            theDialogi.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
+                            if (theDialogi.ShowDialog() == DialogResult.OK)
+                            {
+                                int i = tabControl1.TabCount - 1;
+                                file_name[i] = theDialogi.FileName.ToString();
+
+                                System.IO.StreamReader objReader;
+                                objReader = new System.IO.StreamReader(file_name[i]);
+
+                                bodyi.Text = objReader.ReadToEnd();
+                                objReader.Close();
+
+                                this.Text = file_name[i] + " - Kode";
+                                tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                            }
+                        }
+                    }
                 }
+                tabControl1.Refresh();
             }
-            tabControl1.Refresh();
+            catch
+            {
+                addTab();
+                Open();
+            }
         }
 
         private void addTab()
@@ -1017,7 +1024,6 @@ namespace koside
             tabControl1.SelectedIndex = 0;
             File.Delete("KodeCache.xml");
         }
-
     }
 
     class MySR : ToolStripSystemRenderer
