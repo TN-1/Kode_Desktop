@@ -51,12 +51,19 @@ namespace koside
 
             toolStrip1.Renderer = new MySR();
 
-            foreach (String install in Properties.Settings.Default.KSPLoc)
+            if (Properties.Settings.Default.KSPLoc.Count == -1)
             {
-                toolStripComboBox1.Items.Add(install);
+                toolStripComboBox1.Items.Add("Select an install location");
             }
-            toolStripComboBox1.SelectedIndex = 0;
-            CurrentInstall = Properties.Settings.Default.KSPLoc[0];
+            else
+            {
+                foreach (String install in Properties.Settings.Default.KSPLoc)
+                {
+                    toolStripComboBox1.Items.Add(install);
+                }
+                toolStripComboBox1.SelectedIndex = 0;
+                CurrentInstall = Properties.Settings.Default.KSPLoc[0];
+            }
 
             if (Properties.Settings.Default.DarkMode == true)
             {
@@ -339,9 +346,9 @@ namespace koside
                 if (lenEntered > 0)
                 {
                     if(Properties.Settings.Default.Uppercase == true)
-                        body.AutoCShow(lenEntered, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+                        body.AutoCShow(lenEntered, Keywords.FullUpper());
                     else
-                        body.AutoCShow(lenEntered, "add all at batch break clearscreen compile copy declare delete deploy do do edit else file for from from function global if in list local lock log off on once parameter preserve print reboot remove rename run set shutdown stage step switch then to toggle unlock unset until volume wait when heading prograde retrograde facing maxthrust velocity geoposition latitude longitude up north body angularmomentum angularvel angularvelocity commrange mass verticalspeed groundspeed airespeed vesselname altitude apoapsis periapsis sensors srfprograde srfrerograde obt status shipname");
+                        body.AutoCShow(lenEntered, Keywords.FullLower());
                 }
 
                 if (charcount[i] == 10)
@@ -365,7 +372,7 @@ namespace koside
             {
                 Rectangle r = tabControl1.GetTabRect(i);
                 //Getting the position of the "x" mark.
-                Rectangle closeButton = new Rectangle(r.Right - 25, r.Top + 4, 9, 7);
+                Rectangle closeButton = new Rectangle(r.Right - 28, r.Top + 4, 12, 7);
                 if (closeButton.Contains(e.Location))
                 {
                     if (MessageBox.Show("Would you like to Close this Tab?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -801,13 +808,13 @@ namespace koside
             // Set the keywords. 0 is functions, 1 is variables
             if (Properties.Settings.Default.Uppercase == true)
             {
-                body.SetKeywords(0, "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN");
-                body.SetKeywords(1, "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME");
+                body.SetKeywords(0, Keywords.Upper(0));
+                body.SetKeywords(1, Keywords.Upper(1));
             }
             else if (Properties.Settings.Default.Uppercase == false)
             {
-                body.SetKeywords(0, "add all at batch break clearscreen compile copy declare delete deploy do do edit else file for from from function global if in list local lock log off on once parameter preserve print reboot remove rename run set shutdown stage step switch then to toggle unlock unset until volume wait when");
-                body.SetKeywords(1, "heading prograde retrograde facing maxthrust velocity geoposition latitude longitude up north body angularmomentum angularvel angularvelocity commrange mass verticalspeed groundspeed airespeed vesselname altitude apoapsis periapsis sensors srfprograde srfrerograde obt status shipname");
+                body.SetKeywords(0, Keywords.Lower(0));
+                body.SetKeywords(1, Keywords.Lower(1));
             }
             body.CaretLineBackColor = Color.White;
             body.CaretForeColor = ForeColorVar;
@@ -944,7 +951,7 @@ namespace koside
                 if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
                 {
                     Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                    createNode(tabControl1.SelectedIndex.ToString(), tabControl1.SelectedTab.Text, body.Text, writer);
+                    createNode(tabControl1.SelectedIndex.ToString(), tabControl1.SelectedTab.Text, body.Text, file_name[i], writer);
                 }
             }
             writer.WriteEndElement();
@@ -952,7 +959,7 @@ namespace koside
             writer.Close();
         }
 
-        private void createNode(string tID, string tTitle, string tText, XmlTextWriter writer)
+        private void createNode(string tID, string tTitle, string tText, string tFile, XmlTextWriter writer)
         {
             writer.WriteStartElement("Tab");
             writer.WriteStartElement("Tab_Index");
@@ -963,6 +970,9 @@ namespace koside
             writer.WriteEndElement();
             writer.WriteStartElement("Tab_Text");
             writer.WriteString(tText);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Tab_File");
+            writer.WriteString(tFile);
             writer.WriteEndElement();
             writer.WriteEndElement();
         }
@@ -983,6 +993,7 @@ namespace koside
                 tab.index = Convert.ToInt32(node.SelectSingleNode("Tab_Index").InnerText);
                 tab.title = node.SelectSingleNode("Tab_Title").InnerText;
                 tab.text = node.SelectSingleNode("Tab_Text").InnerText;
+                tab.filename = node.SelectSingleNode("Tab_File").InnerText;
 
                 tabs.Add(tab);
             }
@@ -999,6 +1010,8 @@ namespace koside
                     if(tab.title != null)
                         body.Text = tab.text;
                 }
+                if (tab.filename != null)
+                    file_name[tab.index] = tab.filename;
             }
 
             tabControl1.SelectedIndex = 0;
@@ -1022,5 +1035,42 @@ namespace koside
         public int index;
         public string title;
         public string text;
+        public string filename;
+    }
+
+    class Keywords
+    {
+        static private string key0 = "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN";
+        static private string key1 = "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME";
+
+        static public string Upper(int index)
+        {
+            if (index == 0)
+                return key0.ToUpper();
+            if (index == 1)
+                return key1.ToUpper();
+            return null;   
+        }
+
+        static public string Lower(int index)
+        {
+            if (index == 0)
+                return key0.ToLower();
+            if (index == 1)
+                return key1.ToLower();
+            return null;
+        }
+
+        static public string FullUpper()
+        {
+            string s = key0 + " " + key1;
+            return s.ToUpper();
+        }
+
+        static public string FullLower()
+        {
+            string s = key0 + " " + key1;
+            return s.ToLower();
+        }
     }
 }
