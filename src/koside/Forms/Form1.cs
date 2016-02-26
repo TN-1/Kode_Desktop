@@ -14,6 +14,7 @@ namespace koside
         List<bool> ismodified = new List<bool>();
         List<bool> hasstar = new List<bool>();
         List<int> charcount = new List<int>();
+        List<int> tabcount = new List<int>();
         Color BackColorVar;
         Color ForeColorVar;
         string CurrentInstall;
@@ -97,6 +98,26 @@ namespace koside
                 addTab();
         }
 
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (bool modified in ismodified)
+            {
+                if (modified == true)
+                {
+                    DialogResult result = MessageBox.Show("You have unsaved changes. Do you want to save?", "", MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Yes)
+                    {
+                        SaveAll();
+                        return;
+                    }
+                    else if (result == DialogResult.No)
+                        return;
+                    else if (result == DialogResult.Cancel)
+                        e.Cancel = true;
+                }
+            }
+        }
+
         private void scintilla_TextChanged(object sender, EventArgs e)
         {
             if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
@@ -114,32 +135,6 @@ namespace koside
                 if (ismodified[i] == false)
                     ismodified[i] = true;
             }
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Open();
-        }
-
-        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Quit.
-            this.Close();
-        }
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            New();
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveAs();
         }
 
         private void scintilla_UpdateUI(object sender, UpdateUIEventArgs e)
@@ -203,6 +198,64 @@ namespace koside
             }
         }
 
+        private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+            charcount[i]++;
+
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                //Autocompletion. Will eventually make nicer.
+                // Find the word start
+                var currentPos = body.CurrentPosition;
+                var wordStartPos = body.WordStartPosition(currentPos, true);
+
+                // Display the autocompletion list
+                var lenEntered = currentPos - wordStartPos;
+                if (lenEntered > 0)
+                {
+                    if (Properties.Settings.Default.Uppercase == true)
+                        body.AutoCShow(lenEntered, Keywords.FullUpper());
+                    else
+                        body.AutoCShow(lenEntered, Keywords.FullLower());
+                }
+
+                if (charcount[i] == 10)
+                {
+                    charcount[i] = 0;
+                    body.EndUndoAction();
+                    body.BeginUndoAction();
+                }
+            }
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Open();
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Quit.
+            this.Close();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            New();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveAs();
+        }
+
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AboutBox1 about = new AboutBox1();
@@ -248,6 +301,11 @@ namespace koside
                     HighlightWord(text);
                 }
             }
+        }
+
+        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveAll();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -310,41 +368,41 @@ namespace koside
             licence.Show();
         }
 
-        private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
-        {
-            int i = tabControl1.SelectedIndex;
-            charcount[i]++;
-
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                //Autocompletion. Will eventually make nicer.
-                // Find the word start
-                var currentPos = body.CurrentPosition;
-                var wordStartPos = body.WordStartPosition(currentPos, true);
-
-                // Display the autocompletion list
-                var lenEntered = currentPos - wordStartPos;
-                if (lenEntered > 0)
-                {
-                    if(Properties.Settings.Default.Uppercase == true)
-                        body.AutoCShow(lenEntered, Keywords.FullUpper());
-                    else
-                        body.AutoCShow(lenEntered, Keywords.FullLower());
-                }
-
-                if (charcount[i] == 10)
-                {
-                    charcount[i] = 0;
-                    body.EndUndoAction();
-                    body.BeginUndoAction();
-                }
-            }
-        }
-
         private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CheckUpdate(false);
+        }
+
+        private void wholeScriptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                //Save to same file as opened from
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                string s = body.Text;
+                s = "    " + s;
+                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
+                Clipboard.SetText(s);
+                MessageBox.Show("Scipt is now in your clipboard");
+            }
+        }
+
+        private void selectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                //Save to same file as opened from
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                string s = body.SelectedText;
+                s = "    " + s;
+                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
+                Clipboard.SetText(s);
+                MessageBox.Show("Selection is now in your clipboard");
+            }
         }
 
         private void tabControl1_MouseDown(object sender, MouseEventArgs e)
@@ -366,11 +424,6 @@ namespace koside
             }
         }
 
-        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveAll();
-        }
-
         private void kOSDocumentationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("http://ksp-kos.github.io/KOS_DOC/language.html");
@@ -379,6 +432,57 @@ namespace koside
         private void reportABugToolStripMenuItem_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/TN-1/Kode/issues/new");
+        }
+
+        private void minimiseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int i = tabControl1.SelectedIndex;
+            if (ismodified[i] == true)
+            {
+                ismodified[i] = false;
+                if (hasstar[i] == true)
+                {
+                    string s = tabControl1.SelectedTab.Text;
+                    s = s.Remove(s.Length - 11);
+                    s += "        X";
+                    tabControl1.SelectedTab.Text = s;
+                    hasstar[i] = false;
+                }
+            }
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "kOS Script Files|*.ks";
+                saveFileDialog1.FilterIndex = 2;
+                saveFileDialog1.RestoreDirectory = true;
+                saveFileDialog1.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
+                saveFileDialog1.FileName = "MinimisedScript";
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), Minimiser.Minimise(body.Text));
+                    file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
+                    tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                }
+            }
+        }
+
+        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CurrentInstall != toolStripComboBox1.SelectedItem.ToString())
+            {
+                CurrentInstall = toolStripComboBox1.SelectedItem.ToString();
+                Properties.Settings.Default.KSPLoc.Remove(CurrentInstall);
+                Properties.Settings.Default.KSPLoc.Insert(0, CurrentInstall);
+                toolStripComboBox1.Items.Clear();
+                foreach (String s in Properties.Settings.Default.KSPLoc)
+                {
+                    toolStripComboBox1.Items.Add(s);
+                }
+                toolStripComboBox1.SelectedIndex = 0;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void NewButton_Click(object sender, EventArgs e)
@@ -424,109 +528,6 @@ namespace koside
         private void RedoButton_Click(object sender, EventArgs e)
         {
             Redo();
-        }
-
-        private void wholeScriptToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = tabControl1.SelectedIndex;
-
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                //Save to same file as opened from
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                string s = body.Text;
-                s = "    " + s;
-                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
-                Clipboard.SetText(s);
-                MessageBox.Show("Scipt is now in your clipboard");
-            }
-        }
-
-        private void selectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = tabControl1.SelectedIndex;
-
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                //Save to same file as opened from
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                string s = body.SelectedText;
-                s = "    " + s;
-                s = s.Replace(System.Environment.NewLine, "  \r\n    ");
-                Clipboard.SetText(s);
-                MessageBox.Show("Selection is now in your clipboard");
-            }
-        }
-
-        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (CurrentInstall != toolStripComboBox1.SelectedItem.ToString())
-            {
-                CurrentInstall = toolStripComboBox1.SelectedItem.ToString();
-                Properties.Settings.Default.KSPLoc.Remove(CurrentInstall);
-                Properties.Settings.Default.KSPLoc.Insert(0, CurrentInstall);
-                toolStripComboBox1.Items.Clear();
-                foreach (String s in Properties.Settings.Default.KSPLoc)
-                {
-                    toolStripComboBox1.Items.Add(s);
-                }
-                toolStripComboBox1.SelectedIndex = 0;
-                Properties.Settings.Default.Save();
-            }
-        }
-
-        private void minimiseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            int i = tabControl1.SelectedIndex;
-            if (ismodified[i] == true)
-            {
-                ismodified[i] = false;
-                if (hasstar[i] == true)
-                {
-                    string s = tabControl1.SelectedTab.Text;
-                    s = s.Remove(s.Length - 11);
-                    s += "        X";
-                    tabControl1.SelectedTab.Text = s;
-                    hasstar[i] = false;
-                }
-            }
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                saveFileDialog1.Filter = "kOS Script Files|*.ks";
-                saveFileDialog1.FilterIndex = 2;
-                saveFileDialog1.RestoreDirectory = true;
-                saveFileDialog1.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
-                saveFileDialog1.FileName = "MinimisedScript";
-                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), Minimiser.Minimise(body.Text));
-                    file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
-                    tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
-                }
-            }
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            foreach (bool modified in ismodified)
-            {
-                if (modified == true)
-                {
-                    DialogResult result = MessageBox.Show("You have unsaved changes. Do you want to save?", "", MessageBoxButtons.YesNoCancel);
-                    if (result == DialogResult.Yes)
-                    {
-                        SaveAll();
-                        return;
-                    }
-                    else if (result == DialogResult.No)
-                        return;
-                    else if (result == DialogResult.Cancel)
-                        e.Cancel = true;
-                }
-            }
         }
 
         private void New()
@@ -765,6 +766,7 @@ namespace koside
             ismodified.Add(false);
             hasstar.Add(false);
             charcount.Add(0);
+            tabcount.Add(0);
 
             body.Name = "body";
             body.Anchor = (AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Bottom);
@@ -841,20 +843,6 @@ namespace koside
             tabControl1.SelectedIndex = i;
         }
 
-        private static bool IsBrace(int c)
-        {
-            switch (c)
-            {
-                case '(':
-                case ')':
-                case '{':
-                case '}':
-                    return true;
-            }
-
-            return false;
-        }
-
         private void HighlightWord(string text)
         {
             if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
@@ -890,6 +878,103 @@ namespace koside
                     body.TargetEnd = body.TextLength;
                 }
             }
+        }
+
+        private void createNode(string tID, string tTitle, string tText, string tFile, XmlTextWriter writer)
+        {
+            writer.WriteStartElement("Tab");
+            writer.WriteStartElement("Tab_Index");
+            writer.WriteString(tID);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Tab_Title");
+            writer.WriteString(tTitle);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Tab_Text");
+            writer.WriteString(tText);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Tab_File");
+            writer.WriteString(tFile);
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+        }
+
+        private void createXML()
+        {
+            XmlTextWriter writer = new XmlTextWriter("KodeCache.xml", System.Text.Encoding.UTF8);
+            writer.WriteStartDocument(true);
+            writer.Formatting = Formatting.Indented;
+            writer.Indentation = 2;
+            writer.WriteStartElement("Kode_Cache");
+            for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
+            {
+                tabControl1.SelectedIndex = i;
+                string s = tabControl1.SelectedTab.Text;
+                s = s.Remove(s.Length - 11);
+                s += "        X";
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                {
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                    createNode(tabControl1.SelectedIndex.ToString(), s, body.Text, file_name[i], writer);
+                }
+            }
+            writer.WriteEndElement();
+            writer.WriteEndDocument();
+            writer.Close();
+        }
+
+        private void RestoreSession()
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.Load(@"KodeCache.xml");
+
+            XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Kode_Cache/Tab");
+
+            List<TabRestore> tabs = new List<TabRestore>();
+
+            foreach (XmlNode node in nodes)
+            {
+                TabRestore tab = new TabRestore();
+
+                tab.index = Convert.ToInt32(node.SelectSingleNode("Tab_Index").InnerText);
+                tab.title = node.SelectSingleNode("Tab_Title").InnerText;
+                tab.text = node.SelectSingleNode("Tab_Text").InnerText;
+                tab.filename = node.SelectSingleNode("Tab_File").InnerText;
+
+                tabs.Add(tab);
+            }
+
+            foreach (TabRestore tab in tabs)
+            {
+                addTab();
+                tabControl1.SelectedIndex = tab.index;
+                if (tab.title != null)
+                    tabControl1.SelectedTab.Text = tab.title;
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                {
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                    if (tab.title != null)
+                        body.Text = tab.text;
+                }
+                if (tab.filename != null)
+                    file_name[tab.index] = tab.filename;
+            }
+
+            tabControl1.SelectedIndex = 0;
+            File.Delete("KodeCache.xml");
+        }
+
+        static private bool IsBrace(int c)
+        {
+            switch (c)
+            {
+                case '(':
+                case ')':
+                case '{':
+                case '}':
+                    return true;
+            }
+
+            return false;
         }
 
         static public void CheckUpdate(bool IsSilent)
@@ -948,89 +1033,54 @@ namespace koside
             }
         }
 
-        private void createXML()
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            XmlTextWriter writer = new XmlTextWriter("KodeCache.xml", System.Text.Encoding.UTF8);
-            writer.WriteStartDocument(true);
-            writer.Formatting = Formatting.Indented;
-            writer.Indentation = 2;
-            writer.WriteStartElement("Kode_Cache");
-            for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
+            if (keyData == (Keys.Control | Keys.S))
             {
-                tabControl1.SelectedIndex = i;
-                string s = tabControl1.SelectedTab.Text;
-                s = s.Remove(s.Length - 11);
-                s += "        X";
+                Save();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.X))
+            {
+                Cut();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.C))
+            {
+                Copy();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.V))
+            {
+                Paste();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.Z))
+            {
+                Undo();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.Y))
+            {
+                Redo();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.T))
+            {
+                New();
+                return true;
+            }
+            if (keyData == (Keys.Control | Keys.A))
+            {
                 if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
                 {
                     Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                    createNode(tabControl1.SelectedIndex.ToString(), s, body.Text, file_name[i], writer);
+                    body.SelectAll();
                 }
+                return true;
             }
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
-            writer.Close();
+            return base.ProcessCmdKey(ref msg, keyData);
         }
-
-        private void createNode(string tID, string tTitle, string tText, string tFile, XmlTextWriter writer)
-        {
-            writer.WriteStartElement("Tab");
-            writer.WriteStartElement("Tab_Index");
-            writer.WriteString(tID);
-            writer.WriteEndElement();
-            writer.WriteStartElement("Tab_Title");
-            writer.WriteString(tTitle);
-            writer.WriteEndElement();
-            writer.WriteStartElement("Tab_Text");
-            writer.WriteString(tText);
-            writer.WriteEndElement();
-            writer.WriteStartElement("Tab_File");
-            writer.WriteString(tFile);
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-        }
-
-        private void RestoreSession()
-        {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(@"KodeCache.xml");
-
-            XmlNodeList nodes = doc.DocumentElement.SelectNodes("/Kode_Cache/Tab");
-
-            List<TabRestore> tabs = new List<TabRestore>();
-
-            foreach (XmlNode node in nodes)
-            {
-                TabRestore tab = new TabRestore();
-
-                tab.index = Convert.ToInt32(node.SelectSingleNode("Tab_Index").InnerText);
-                tab.title = node.SelectSingleNode("Tab_Title").InnerText;
-                tab.text = node.SelectSingleNode("Tab_Text").InnerText;
-                tab.filename = node.SelectSingleNode("Tab_File").InnerText;
-
-                tabs.Add(tab);
-            }
-
-            foreach (TabRestore tab in tabs)
-            {
-                addTab();
-                tabControl1.SelectedIndex = tab.index;
-                if(tab.title != null)
-                    tabControl1.SelectedTab.Text = tab.title;
-                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-                {
-                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                    if(tab.title != null)
-                        body.Text = tab.text;
-                }
-                if (tab.filename != null)
-                    file_name[tab.index] = tab.filename;
-            }
-
-            tabControl1.SelectedIndex = 0;
-            File.Delete("KodeCache.xml");
-        }
-
     }
 
     class MySR : ToolStripSystemRenderer
