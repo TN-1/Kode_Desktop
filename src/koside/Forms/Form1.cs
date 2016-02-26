@@ -109,6 +109,10 @@ namespace koside
                 // and include some padding for good measure.
                 const int padding = 2;
                 body.Margins[0].Width = body.TextWidth(Style.LineNumber, new string('9', maxLineNumberCharLength + 1)) + padding;
+
+                int i = tabControl1.SelectedIndex;
+                if (ismodified[i] == false)
+                    ismodified[i] = true;
             }
         }
 
@@ -300,24 +304,6 @@ namespace koside
             }
         }
 
-        private void exportToKSPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            /* if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
-            {
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                //Export to KSP scripts folder.
-                Form3 formname = new Form3();
-                var result = formname.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    string file = formname.name;
-                    string location = Properties.Settings.Default.KSPLoc + @"\Ships\Script\" + file;
-                    System.IO.File.WriteAllText(location, body.Text);
-                }
-            }*/
-            MessageBox.Show("Feautre inentionally disabled. Please use save as instead");
-        }
-
         private void licenceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form5 licence = new Form5();
@@ -327,10 +313,6 @@ namespace koside
         private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
         {
             int i = tabControl1.SelectedIndex;
-
-            if (ismodified[i] == false)
-                ismodified[i] = true;
-
             charcount[i]++;
 
             if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
@@ -523,6 +505,26 @@ namespace koside
                     System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), Minimiser.Minimise(body.Text));
                     file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
                     tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (bool modified in ismodified)
+            {
+                if (modified == true)
+                {
+                    DialogResult result = MessageBox.Show("You have unsaved changes. Do you want to save?", "", MessageBoxButtons.YesNoCancel);
+                    if (result == DialogResult.Yes)
+                    {
+                        SaveAll();
+                        return;
+                    }
+                    else if (result == DialogResult.No)
+                        return;
+                    else if (result == DialogResult.Cancel)
+                        e.Cancel = true;
                 }
             }
         }
@@ -745,6 +747,7 @@ namespace koside
                     }
                 }
                 tabControl1.Refresh();
+                Save();
             }
             catch
             {
@@ -955,10 +958,13 @@ namespace koside
             for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
             {
                 tabControl1.SelectedIndex = i;
+                string s = tabControl1.SelectedTab.Text;
+                s = s.Remove(s.Length - 11);
+                s += "        X";
                 if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
                 {
                     Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                    createNode(tabControl1.SelectedIndex.ToString(), tabControl1.SelectedTab.Text, body.Text, file_name[i], writer);
+                    createNode(tabControl1.SelectedIndex.ToString(), s, body.Text, file_name[i], writer);
                 }
             }
             writer.WriteEndElement();
@@ -1024,6 +1030,7 @@ namespace koside
             tabControl1.SelectedIndex = 0;
             File.Delete("KodeCache.xml");
         }
+
     }
 
     class MySR : ToolStripSystemRenderer
