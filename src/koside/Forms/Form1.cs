@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ScintillaNET;
 using System.IO;
 using System.Xml;
+using System.Linq;
 
 namespace koside
 {
@@ -19,6 +20,7 @@ namespace koside
         Color ForeColorVar;
         string CurrentInstall;
         int lastCaretPos = 0;
+        int TabSize = 4;
 
         public Form1()
         {
@@ -226,6 +228,41 @@ namespace koside
                     charcount[i] = 0;
                     body.EndUndoAction();
                     body.BeginUndoAction();
+                }
+
+                if (e.Char == (int)'}')
+                {
+                    int x = body.CurrentPosition - TabSize;
+                    body.Text = body.Text.Remove(body.CurrentPosition - (TabSize + 1), TabSize);
+                    body.SetEmptySelection(x);
+                }
+            }
+        }
+
+        private void scintilla_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                if (e.KeyCode == Keys.Enter)
+                {
+                    try
+                    {
+                        string[] a = body.Text.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                        string b = a[body.CurrentLine];
+                        int spaces = b.TakeWhile(Char.IsWhiteSpace).Count();
+                        body.IndentWidth = spaces;
+
+                        if (b.Contains("{"))
+                        {
+                            body.IndentWidth += TabSize;
+                            SendKeys.Send("{TAB}");
+                        }
+                        else if (body.IndentWidth != 0)
+                            SendKeys.Send("{TAB}");
+                    }
+                    catch{}
                 }
             }
         }
@@ -834,8 +871,10 @@ namespace koside
             body.CharAdded += new System.EventHandler<ScintillaNET.CharAddedEventArgs>(this.scintilla_CharAdded);
             body.UpdateUI += new System.EventHandler<ScintillaNET.UpdateUIEventArgs>(this.scintilla_UpdateUI);
             body.TextChanged += new System.EventHandler(this.scintilla_TextChanged);
+            body.KeyDown += new System.Windows.Forms.KeyEventHandler(this.scintilla_KeyDown);
 
             body.BeginUndoAction();
+            body.IndentWidth = 0;
 
             tab.Controls.Add(body);
             tabControl1.TabPages.Add(tab);
@@ -1081,6 +1120,7 @@ namespace koside
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
     }
 
     class MySR : ToolStripSystemRenderer
