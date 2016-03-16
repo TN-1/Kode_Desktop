@@ -6,4 +6,4 @@ The goal of Kode is ever changing, but by Version 1.0 I aim to make it a powerfu
 Kode is released under the GPL V3 licence and incorporates components and libraries licenced under the MIT licence.  
   
 # Contributing  
-I welcome input and codes contributions. Create a pull request and ill check it out :)  
+I welcome input and code contributions. Create a pull request and ill check it out :)  
