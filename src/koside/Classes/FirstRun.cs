@@ -34,7 +34,7 @@ namespace koside
             if (linux == true)
             {
                 Properties.Settings.Default.OS = "Linux";
-                return steam = KSPPathTools.LinuxSteam();
+                return null;
             }
             else
                 return steam = KSPPathTools.WindowsSteam();

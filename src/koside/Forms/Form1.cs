@@ -19,10 +19,12 @@ namespace koside
         Color BackColorVar;
         Color ForeColorVar;
         string CurrentInstall;
+        string ProjRootDir;
+        string ProjFile;
         int lastCaretPos = 0;
-        int TabSize = 4;
+        int TabSize;
 
-        public Form1()
+        public Form1(string file)
         {
             InitializeComponent();
             WindowState = FormWindowState.Maximized;
@@ -39,6 +41,33 @@ namespace koside
                 ForeColorVar = Color.Black;
             }
 
+            if (Properties.Settings.Default.DarkMode == true)
+            {
+                NewButton.Image = Properties.Resources.NewFileNight;
+                SaveButton.Image = Properties.Resources.SaveNight;
+                SaveAllButton.Image = Properties.Resources.SaveAllNight;
+                OpenButton.Image = Properties.Resources.OpenNight;
+                CutButton.Image = Properties.Resources.CutNight;
+                CopyButton.Image = Properties.Resources.CopyNight;
+                PasteButton.Image = Properties.Resources.PasteNight;
+                UndoButton.Image = Properties.Resources.UndoNight;
+                RedoButton.Image = Properties.Resources.RedoNight;
+                toolStripButton1.Image = Properties.Resources.KSPDark;
+            }
+            else
+            {
+                NewButton.Image = Properties.Resources.NewFile;
+                SaveButton.Image = Properties.Resources.Save;
+                SaveAllButton.Image = Properties.Resources.Saveall;
+                OpenButton.Image = Properties.Resources.Open;
+                CutButton.Image = Properties.Resources.Cut;
+                CopyButton.Image = Properties.Resources.Copy;
+                PasteButton.Image = Properties.Resources.Paste;
+                UndoButton.Image = Properties.Resources.Undo;
+                RedoButton.Image = Properties.Resources.Redo;
+                toolStripButton1.Image = Properties.Resources.KSP;
+            }
+
             tabControl1.BackColor = BackColorVar;
             tabControl1.ForeColor = ForeColorVar;
 
@@ -51,6 +80,8 @@ namespace koside
             toolStripComboBox1.ForeColor = ForeColorVar;
             BackColor = BackColorVar;
             ForeColor = ForeColorVar;
+            treeView1.BackColor = BackColorVar;
+            treeView1.ForeColor = ForeColorVar;
 
             toolStrip1.Renderer = new MySR();
 
@@ -68,36 +99,57 @@ namespace koside
                 CurrentInstall = Properties.Settings.Default.KSPLoc[0];
             }
 
-            if (Properties.Settings.Default.DarkMode == true)
-            {
-                NewButton.Image = Properties.Resources.NewFileNight;
-                SaveButton.Image = Properties.Resources.SaveNight;
-                SaveAllButton.Image = Properties.Resources.SaveAllNight;
-                OpenButton.Image = Properties.Resources.OpenNight;
-                CutButton.Image = Properties.Resources.CutNight;
-                CopyButton.Image = Properties.Resources.CopyNight;
-                PasteButton.Image = Properties.Resources.PasteNight;
-                UndoButton.Image = Properties.Resources.UndoNight;
-                RedoButton.Image = Properties.Resources.RedoNight;
-            }
-            else
-            {
-                NewButton.Image = Properties.Resources.NewFile;
-                SaveButton.Image = Properties.Resources.Save;
-                SaveAllButton.Image = Properties.Resources.Saveall;
-                OpenButton.Image = Properties.Resources.Open;
-                CutButton.Image = Properties.Resources.Cut;
-                CopyButton.Image = Properties.Resources.Copy;
-                PasteButton.Image = Properties.Resources.Paste;
-                UndoButton.Image = Properties.Resources.Undo;
-                RedoButton.Image = Properties.Resources.Redo;
-            }
+            TabSize = Properties.Settings.Default.tabsize;
 
-            //Check to see if there is a previous session(Light-Dark mode transition)
             if (File.Exists("KodeCache.xml"))
                 RestoreSession();
             else
-                addTab();
+            {
+                if (file != null)
+                {
+                    //Args
+                    if (file.Contains("ksproj"))
+                    {
+                        //.KSProj
+                        ParseKSProj(file);
+                    }
+                    else
+                    {
+                        //.KS(Hopefully)
+                        RemoveTree();
+                        addTab();
+                        file_name[tabControl1.SelectedIndex] = file;
+
+                        if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                        {
+                            Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                            StreamReader objReader;
+                            objReader = new StreamReader(file);
+
+                            body.Text = objReader.ReadToEnd();
+                            objReader.Close();
+
+                            this.Text = file_name[tabControl1.SelectedIndex] + " - Kode";
+                            tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file) + ".ks        X";
+                        }
+                    }
+                }
+                else
+                {
+                    //No args
+                    if (Properties.Settings.Default.mode == false)
+                    {
+                        //Text Mode
+                        RemoveTree();
+                        addTab();
+                    }
+                    else
+                    {
+                        //Default to Proj mode
+                        ParseKSProj(file);
+                    }
+                }
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -262,7 +314,7 @@ namespace koside
                         else if (body.IndentWidth != 0)
                             SendKeys.Send("{TAB}");
                     }
-                    catch{}
+                    catch { }
                 }
             }
         }
@@ -347,14 +399,81 @@ namespace koside
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            try
             {
-                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                {
+                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                    bool test = Properties.Settings.Default.DarkMode;
+                    bool othertest = Properties.Settings.Default.Uppercase;
+                    bool yetanothertest = Properties.Settings.Default.mode;
+
+                    Form2 settings = new Form2();
+                    settings.ShowDialog();
+
+                    if (Properties.Settings.Default.DarkMode != test)
+                    {
+                        if (Properties.Settings.Default.DarkMode == true)
+                        {
+                            BackColorVar = Color.Gray;
+                            ForeColorVar = Color.White;
+                            DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                            if (result == DialogResult.OK)
+                            {
+                                createXML();
+                                Application.Restart();
+                            }
+                        }
+                        else
+                        {
+                            BackColorVar = Color.White;
+                            ForeColorVar = Color.Black;
+                            DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                            if (result == DialogResult.OK)
+                            {
+                                createXML();
+                                Application.Restart();
+                            }
+                        }
+                    }
+                    if (Properties.Settings.Default.Uppercase != othertest)
+                    {
+                        DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                        if (result == DialogResult.OK)
+                        {
+                            createXML();
+                            Application.Restart();
+                        }
+                    }
+                    if (Properties.Settings.Default.mode != yetanothertest)
+                    {
+                        DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                        if (result == DialogResult.OK)
+                        {
+                            createXML();
+                            Application.Restart();
+                        }
+                    }
+
+                    toolStripComboBox1.Items.Clear();
+                    foreach (String s in Properties.Settings.Default.KSPLoc)
+                    {
+                        toolStripComboBox1.Items.Add(s);
+                    }
+                    toolStripComboBox1.SelectedIndex = 0;
+
+                    TabSize = Properties.Settings.Default.tabsize;
+                }
+            }
+            catch
+            {
                 bool test = Properties.Settings.Default.DarkMode;
                 bool othertest = Properties.Settings.Default.Uppercase;
+                bool yetanothertest = Properties.Settings.Default.mode;
 
                 Form2 settings = new Form2();
                 settings.ShowDialog();
+
                 if (Properties.Settings.Default.DarkMode != test)
                 {
                     if (Properties.Settings.Default.DarkMode == true)
@@ -380,7 +499,16 @@ namespace koside
                         }
                     }
                 }
-                if(Properties.Settings.Default.Uppercase != othertest)
+                if (Properties.Settings.Default.Uppercase != othertest)
+                {
+                    DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
+                    if (result == DialogResult.OK)
+                    {
+                        createXML();
+                        Application.Restart();
+                    }
+                }
+                if (Properties.Settings.Default.mode != yetanothertest)
                 {
                     DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
                     if (result == DialogResult.OK)
@@ -396,6 +524,8 @@ namespace koside
                     toolStripComboBox1.Items.Add(s);
                 }
                 toolStripComboBox1.SelectedIndex = 0;
+
+                TabSize = Properties.Settings.Default.tabsize;
             }
         }
 
@@ -505,6 +635,26 @@ namespace koside
             }
         }
 
+        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Forms.NewProject proj = new Forms.NewProject();
+            if(proj.ShowDialog() == DialogResult.OK)
+            {
+                ParseKSProj(proj.ksproj);
+            }
+        }
+
+        private void importLibraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Forms.Libraries libs = new Forms.Libraries();
+            try
+            {
+                libs.ShowDialog();
+            }
+            catch { }
+
+        }
+
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (CurrentInstall != toolStripComboBox1.SelectedItem.ToString())
@@ -520,6 +670,37 @@ namespace koside
                 toolStripComboBox1.SelectedIndex = 0;
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            SaveAll();
+
+            List<string> files = new List<string>();
+            string[] s = Directory.GetFiles(ProjRootDir, "*", SearchOption.AllDirectories);
+            
+            foreach(string s1 in s)
+            {
+                if (s1.Contains("NoExport") != true)
+                {
+                    files.Add(s1);
+                }
+            }
+            foreach(string s2 in files)
+            {
+                string s3 = Path.GetFileName(s2);
+                s3 = Path.Combine(CurrentInstall, "Ships", "Script", s3);
+                try
+                {
+                    File.Copy(s2, s3, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("File: " + s2 + " Failed to copy. Error: " + ex);
+                }
+            }
+
+            MessageBox.Show("Project succesfully exported");
         }
 
         private void NewButton_Click(object sender, EventArgs e)
@@ -565,6 +746,163 @@ namespace koside
         private void RedoButton_Click(object sender, EventArgs e)
         {
             Redo();
+        }
+
+        private void newFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string s;
+            string folderName = Microsoft.VisualBasic.Interaction.InputBox("Name?", "New Folder");
+            if (treeView1.SelectedNode.Parent == null)
+                s = Path.Combine(ProjRootDir, folderName);
+            else
+                s = Path.Combine(ProjRootDir, treeView1.SelectedNode.Text, folderName);
+
+            Directory.CreateDirectory(s);
+            ListDirectory(ProjRootDir);
+        }
+
+        private void createNewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string s;
+            string fileName = Microsoft.VisualBasic.Interaction.InputBox("Name?", "New File", "NewFile.ks");
+            if (treeView1.SelectedNode.Parent == null)
+                s = Path.Combine(ProjRootDir, fileName);
+            else
+                s = Path.Combine(ProjRootDir, treeView1.SelectedNode.Text, fileName);
+
+            if (File.Exists(s) == false)
+            {
+                using (var file = File.Create(s))
+                {
+
+                }
+            }
+            else
+                MessageBox.Show("This file exists");
+     
+            ListDirectory(ProjRootDir);
+        }
+
+        private void importExistingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ImportLib = new OpenFileDialog();
+            ImportLib.Title = "Open Library";
+            ImportLib.Filter = "kOS Libraries|*.ks";
+            if (ImportLib.ShowDialog() == DialogResult.OK)
+            {
+                string ss;
+                string s = ImportLib.FileName;
+                if (treeView1.SelectedNode.Parent == null)
+                    ss = Path.Combine(ProjRootDir, Path.GetFileName(s));
+                else
+                    ss = Path.Combine(ProjRootDir, treeView1.SelectedNode.Text, Path.GetFileName(s));
+                try
+                {
+                    File.Copy(s, ss);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                ListDirectory(ProjRootDir);
+            }
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string s = treeView1.SelectedNode.Text;
+            if(MessageBox.Show("Are you sure you want to delete " + s + "?", "Deletion", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                s = treeView1.SelectedNode.FullPath;
+                s = s.Substring(s.IndexOf('\\') + 1);
+                s = ProjRootDir + '\\' + s;
+                try
+                {
+                    File.Delete(s);
+                }
+                catch
+                {
+                    DirectoryInfo di = new DirectoryInfo(s);
+                    foreach (FileInfo file in di.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                    Directory.Delete(s);
+                }
+            }
+            ListDirectory(ProjRootDir);
+        }
+
+        private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            string s = Path.Combine(ProjRootDir, treeView1.SelectedNode.Text);
+            if (treeView1.SelectedNode.Nodes.Count == 0 && File.Exists(s))
+            {
+                try
+                {
+                    if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                    {
+                        Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                        if (tabControl1.TabCount == 1 && body.TextLength == 0)
+                        {
+                            int i = 0;
+                            file_name[i] = s;
+
+                            StreamReader objReader;
+                            objReader = new StreamReader(file_name[i]);
+                            body.Text = objReader.ReadToEnd();
+                            objReader.Close();
+
+                            this.Text = file_name[i] + " - Kode";
+                            tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+
+                        }
+                        else
+                        {
+                            int i = addTab();
+                            file_name[i] = s;
+                            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                            {
+                                Scintilla bodyn = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                                StreamReader objReader;
+                                objReader = new StreamReader(file_name[i]);
+                                bodyn.Text = objReader.ReadToEnd();
+                                objReader.Close();
+
+                                this.Text = file_name[i] + " - Kode";
+                                tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    int i = addTab();
+                    file_name[i] = s;
+                    if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                    {
+                        Scintilla bodyn = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+
+                        StreamReader objReader;
+                        objReader = new StreamReader(file_name[i]);
+                        bodyn.Text = objReader.ReadToEnd();
+                        objReader.Close();
+
+                        this.Text = file_name[i] + " - Kode";
+                        tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                    }
+                }
+            }
+        }
+
+        private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ((TreeView)sender).SelectedNode = e.Node;
+            }
         }
 
         private void New()
@@ -655,6 +993,16 @@ namespace koside
             }
             else
                 SaveAs();
+
+            if (treeView1.Nodes.Count != 0)
+            {
+                List<string> title = new List<string>();
+                foreach (TabPage t in tabControl1.TabPages)
+                {
+                    title.Add(t.Text);
+                }
+                Classes.KsprojTools.ProjectFile(null, null, null, null, title, file_name, tabControl1.SelectedIndex, CurrentInstall, ProjFile);
+            }
         }
 
         private void SaveAs()
@@ -688,7 +1036,16 @@ namespace koside
                     file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
                     tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
                 }
+            }
 
+            if (treeView1.Nodes.Count != 0)
+            {
+                List<string> title = new List<string>();
+                foreach (TabPage t in tabControl1.TabPages)
+                {
+                    title.Add(t.Text);
+                }
+                Classes.KsprojTools.ProjectFile(null, null, null, null, title, file_name, tabControl1.SelectedIndex, CurrentInstall, ProjFile);
             }
         }
 
@@ -724,11 +1081,22 @@ namespace koside
                     }
                 }
             }
+
+            if (treeView1.Nodes.Count != 0)
+            {
+                List<string> title = new List<string>();
+                foreach (TabPage t in tabControl1.TabPages)
+                {
+                    title.Add(t.Text);
+                }
+                Classes.KsprojTools.ProjectFile(null, null, null, null, title, file_name, tabControl1.SelectedIndex, CurrentInstall, ProjFile);
+            }
         }
 
         private void Open()
         {
-            try {
+            try
+            {
                 if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
                 {
                     Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
@@ -738,21 +1106,29 @@ namespace koside
                         //Open a file
                         OpenFileDialog theDialog = new OpenFileDialog();
                         theDialog.Title = "Open Script";
-                        theDialog.Filter = "kOS Scripts|*.ks";
+                        theDialog.Filter = "kOS Scripts|*.ks|Kode Project Files|*.ksproj";
                         theDialog.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                         if (theDialog.ShowDialog() == DialogResult.OK)
                         {
-                            int i = tabControl1.TabCount - 1;
-                            file_name[i] = theDialog.FileName.ToString();
+                            if (theDialog.FileName.ToString().Contains(".ksproj"))
+                            {
+                                ParseKSProj(theDialog.FileName.ToString());
+                                return;
+                            }
+                            else
+                            {
+                                int i = tabControl1.TabCount - 1;
+                                file_name[i] = theDialog.FileName.ToString();
 
-                            StreamReader objReader;
-                            objReader = new StreamReader(file_name[i]);
+                                StreamReader objReader;
+                                objReader = new StreamReader(file_name[i]);
 
-                            body.Text = objReader.ReadToEnd();
-                            objReader.Close();
+                                body.Text = objReader.ReadToEnd();
+                                objReader.Close();
 
-                            this.Text = file_name[i] + " - Kode";
-                            tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                                this.Text = file_name[i] + " - Kode";
+                                tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                            }
                         }
                     }
                     else
@@ -765,21 +1141,29 @@ namespace koside
                             //Open a file
                             OpenFileDialog theDialogi = new OpenFileDialog();
                             theDialogi.Title = "Open Script";
-                            theDialogi.Filter = "kOS Scripts|*.ks";
+                            theDialogi.Filter = "kOS Scripts|*.ks|Kode Project Files|*.ksproj";
                             theDialogi.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                             if (theDialogi.ShowDialog() == DialogResult.OK)
                             {
-                                int i = tabControl1.TabCount - 1;
-                                file_name[i] = theDialogi.FileName.ToString();
+                                if (theDialogi.FileName.ToString().Contains(".ksproj"))
+                                {
+                                    ParseKSProj(theDialogi.FileName.ToString());
+                                    return;
+                                }
+                                else
+                                {
+                                    int i = tabControl1.TabCount - 1;
+                                    file_name[i] = theDialogi.FileName.ToString();
 
-                                System.IO.StreamReader objReader;
-                                objReader = new System.IO.StreamReader(file_name[i]);
+                                    System.IO.StreamReader objReader;
+                                    objReader = new System.IO.StreamReader(file_name[i]);
 
-                                bodyi.Text = objReader.ReadToEnd();
-                                objReader.Close();
+                                    bodyi.Text = objReader.ReadToEnd();
+                                    objReader.Close();
 
-                                this.Text = file_name[i] + " - Kode";
-                                tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                                    this.Text = file_name[i] + " - Kode";
+                                    tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
+                                }
                             }
                         }
                     }
@@ -787,14 +1171,14 @@ namespace koside
                 tabControl1.Refresh();
                 Save();
             }
-            catch
+            catch(Exception ex)
             {
                 addTab();
                 Open();
             }
         }
 
-        private void addTab()
+        private int addTab()
         {
 
             TabPage tab = new TabPage("Untitled        X");
@@ -880,6 +1264,7 @@ namespace koside
             tabControl1.TabPages.Add(tab);
             int i = tabControl1.TabCount - 1;
             tabControl1.SelectedIndex = i;
+            return i;
         }
 
         private void HighlightWord(string text)
@@ -1002,6 +1387,138 @@ namespace koside
             File.Delete("KodeCache.xml");
         }
 
+        private void RemoveTree()
+        {
+            Controls.Remove(treeView1);
+            treeView1.Dispose();
+            tabControl1.Width = this.Width - 15;
+            tabControl1.Anchor = AnchorStyles.Right | AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom;
+        }
+
+        private void ParseKSProj(string file)
+        {
+            if(tabControl1.TabCount != 0)
+            {
+                try
+                {
+                    SaveAll();
+                    tabControl1.TabPages.Clear();
+                }catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
+
+            }
+            if (file != null)
+            {
+                //Parse .ksproj file, Definition Version 0.1
+                ProjFile = file;
+                Version minversion;
+                Version curVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                string install;
+                int index;
+
+                XmlDocument doc = new XmlDocument();
+                doc.Load(file);
+
+                //Verify that the file is within spec
+                XmlNode minversionxml = doc.SelectSingleNode("/ksproj/metadata/minimumversion");
+                minversion = Version.Parse(minversionxml.InnerText);
+                if (curVersion >= minversion)
+                {
+                    //Parse settings
+                    XmlNode installxml = doc.SelectSingleNode("/ksproj/settings/selectedinstall");
+                    XmlNode indexxml = doc.SelectSingleNode("/ksproj/settings/selectedindex");
+                    XmlNode rootxml = doc.SelectSingleNode("/ksproj/metadata/rootdir");
+                    install = installxml.InnerText;
+                    try
+                    {
+                        index = Convert.ToInt32(indexxml.InnerText.ToString());
+                    }
+                    catch
+                    {
+                        index = 0;
+                    }
+
+                    ListDirectory(rootxml.InnerText);
+                    ProjRootDir = rootxml.InnerText;
+
+                    //Parse tab data
+                    XmlNodeList nodes = doc.DocumentElement.SelectNodes("/ksproj/tabs/tab");
+                    List<TabRestore> tabs = new List<TabRestore>();
+                    foreach (XmlNode node in nodes)
+                    {
+                        TabRestore tab = new TabRestore();
+
+                        tab.index = Convert.ToInt32(node.SelectSingleNode("index").InnerText);
+                        tab.title = node.SelectSingleNode("title").InnerText;
+                        tab.filename = node.SelectSingleNode("file_name").InnerText;
+
+                        tabs.Add(tab);
+                    }
+
+                    //Display the tabs
+                    foreach (TabRestore tab in tabs)
+                    {
+                        addTab();
+                        tabControl1.SelectedIndex = tab.index;
+                        if (tab.title != null)
+                            tabControl1.SelectedTab.Text = tab.title;
+                        if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                        {
+                            Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                            try {
+                                StreamReader objReader;
+                                objReader = new StreamReader(tab.filename);
+                                body.Text = objReader.ReadToEnd();
+                                objReader.Close();
+                            }
+                            catch(Exception ex)
+                            {
+                                body.Text = "ERROR: Error opening this file. Please try again manually\r\n" + ex;   
+                            }
+
+                        }
+                        if (tab.filename != null)
+                            file_name[tab.index] = tab.filename;
+                    }
+
+                    //Verify the libs are available
+                    //TO-DO
+
+                    //Finish up
+                    tabControl1.SelectedIndex = index;
+                    toolStripComboBox1.SelectedItem = toolStripComboBox1.FindStringExact(install);
+                }
+                else
+                    MessageBox.Show("Sorry, We cant parse this KSproj file. Current Version < Minimum Version\r\nThis probably means that this project file was created to a newer definition and doesnt backwards support this version of the parser");
+
+            }
+            else
+            {
+                //Welcome screen
+            }
+        }
+
+        private void ListDirectory(string path)
+        {
+            treeView1.Nodes.Clear();
+            var rootDirectoryInfo = new DirectoryInfo(path);
+            treeView1.Nodes.Add(CreateDirectoryNode(rootDirectoryInfo));
+            treeView1.ExpandAll();
+        }
+
+        private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
+        {
+            var directoryNode = new TreeNode(directoryInfo.Name, 0, 0);
+            foreach (var directory in directoryInfo.GetDirectories())
+                directoryNode.Nodes.Add(CreateDirectoryNode(directory));
+            foreach (var file in directoryInfo.GetFiles())
+                if(!file.ToString().Contains(".ksproj"))
+                    directoryNode.Nodes.Add(new TreeNode(file.Name, 1, 1));
+            return directoryNode;
+        }
+
         static private bool IsBrace(int c)
         {
             switch (c)
@@ -1020,6 +1537,7 @@ namespace koside
         {
             Version newVersion = null;
             string url = "https://github.com/TN-1/Kode/releases";
+            string log = "";
             XmlTextReader reader;
             try
             {
@@ -1047,6 +1565,9 @@ namespace koside
                                     case "url":
                                         url = reader.Value;
                                         break;
+                                    case "log":
+                                        log = reader.Value;
+                                        break;
                                 }
                             }
                         }
@@ -1060,16 +1581,41 @@ namespace koside
             if (curVersion.CompareTo(newVersion) < 0)
             {
                 if (DialogResult.Yes ==
-                 MessageBox.Show("Would you like to download?", "New Version Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
-                {
+                 MessageBox.Show("Would you like to download?\r\nChangelog:\r\n" + log, "New Version Detected", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                     System.Diagnostics.Process.Start(url);
-                }
             }
             else
             {
                 if (!IsSilent)
                     MessageBox.Show("Kode is up to date", "No new version");
             }
+        }
+
+        public void ImportLib(string name, bool type)
+        {
+            if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+            {
+                Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                if (type == true)
+                {
+                    //Run Once
+                    body.InsertText(0, "run once " + name + Environment.NewLine);
+                    string s = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase), "Libraries", name);
+                    s = s.Remove(0, 6);
+                    string ss = Path.Combine(ProjRootDir, "Libraries", name);
+                    File.Copy(s, ss, true);
+                }
+                else
+                {
+                    //Run
+                    body.InsertText(0, "run " + name + Environment.NewLine);
+                    string s = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase), "Libraries", name);
+                    s = s.Remove(0, 6);
+                    string ss = Path.Combine(ProjRootDir, "Libraries", name);
+                    File.Copy(s, ss, true);
+                }
+            }
+            ListDirectory(ProjRootDir);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

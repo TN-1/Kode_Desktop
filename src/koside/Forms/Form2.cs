@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace koside
@@ -16,21 +9,21 @@ namespace koside
         public Form2()
         {
             InitializeComponent();
+
             if(Properties.Settings.Default.DarkMode == false)
-            {
                 radioButton4.Checked = true;
-            }else
-            {
-                radioButton3.Checked = true;
-            }
-            if (Properties.Settings.Default.Uppercase == true)
-            {
-                radioButton1.Checked = true;
-            }
             else
-            {
+                radioButton3.Checked = true;
+            if (Properties.Settings.Default.Uppercase == true)
+                radioButton1.Checked = true;
+            else
                 radioButton2.Checked = true;
-            }
+            if (Properties.Settings.Default.mode == false)
+                radioButton5.Checked = true;
+            else
+                radioButton6.Checked = true;
+
+            numericUpDown1.Value = Properties.Settings.Default.tabsize;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -48,6 +41,15 @@ namespace koside
                 Properties.Settings.Default.DarkMode = false;
             else
                 Properties.Settings.Default.DarkMode = false;
+
+            if (radioButton5.Checked == true)
+                Properties.Settings.Default.mode = false;
+            else if (radioButton6.Checked == true)
+                Properties.Settings.Default.mode = true;
+            else
+                Properties.Settings.Default.mode = true;
+
+            Properties.Settings.Default.tabsize = Convert.ToInt32(numericUpDown1.Value);
                 
             Properties.Settings.Default.Save();
             this.Close();
@@ -62,6 +64,12 @@ namespace koside
         {
             Forms.Setup setup = new Forms.Setup();
             setup.ShowDialog();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Forms.Libraries lib = new Forms.Libraries();
+            lib.ShowDialog();
         }
     }
 }

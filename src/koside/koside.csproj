@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>koside</RootNamespace>
     <AssemblyName>Kode</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -73,7 +73,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TabControlEX">
@@ -81,6 +80,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\KsprojTools.cs" />
     <Compile Include="Forms\AboutBox1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,6 +121,18 @@
     <Compile Include="Classes\KSPPathTools.cs" />
     <Compile Include="Classes\Minimiser.cs" />
     <Compile Include="Classes\Program.cs" />
+    <Compile Include="Forms\Libraries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Libraries.Designer.cs">
+      <DependentUpon>Libraries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NewProject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NewProject.Designer.cs">
+      <DependentUpon>NewProject.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Setup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -146,6 +158,12 @@
     <EmbeddedResource Include="Forms\Form5.resx">
       <DependentUpon>Form5.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Libraries.resx">
+      <DependentUpon>Libraries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewProject.resx">
+      <DependentUpon>NewProject.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Setup.resx">
       <DependentUpon>Setup.cs</DependentUpon>
     </EmbeddedResource>
@@ -158,6 +176,7 @@
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -190,8 +209,16 @@
     <Content Include="Resources\Copy_6524.png" />
     <None Include="Resources\CutNight.png" />
     <Content Include="Resources\Cut_6523.png" />
+    <None Include="Resources\Folder_6222.png" />
+    <None Include="Resources\Folder_6221.png" />
     <Content Include="Resources\jeb2.jpg" />
+    <None Include="Resources\KSFile.png" />
+    <Content Include="Resources\KSP.png" />
+    <Content Include="Resources\KSPDark.png" />
     <Content Include="Resources\monitor_minimal.ico" />
+    <None Include="Resources\Example.ksproj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\NewFileNight.png" />
     <Content Include="Resources\NewFile_6276.png" />
     <None Include="Resources\OpenNight.png" />

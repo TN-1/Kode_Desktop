@@ -37,13 +37,21 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
+            this.radioButton6 = new System.Windows.Forms.RadioButton();
+            this.button4 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(257, 145);
+            this.button1.Location = new System.Drawing.Point(385, 144);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 0;
@@ -53,7 +61,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(176, 145);
+            this.button2.Location = new System.Drawing.Point(304, 144);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 1;
@@ -63,9 +71,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(50, 145);
+            this.button3.Location = new System.Drawing.Point(178, 144);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(120, 21);
+            this.button3.Size = new System.Drawing.Size(120, 23);
             this.button3.TabIndex = 6;
             this.button3.Text = "Modify KSP installs";
             this.button3.UseVisualStyleBackColor = true;
@@ -75,9 +83,9 @@
             // 
             this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(17, 79);
+            this.groupBox1.Location = new System.Drawing.Point(240, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(315, 60);
+            this.groupBox1.Size = new System.Drawing.Size(220, 60);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Syntax Highlighting";
@@ -106,9 +114,9 @@
             // 
             this.groupBox2.Controls.Add(this.radioButton4);
             this.groupBox2.Controls.Add(this.radioButton3);
-            this.groupBox2.Location = new System.Drawing.Point(17, 12);
+            this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(312, 60);
+            this.groupBox2.Size = new System.Drawing.Size(220, 60);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Appearence";
@@ -135,11 +143,82 @@
             this.radioButton3.Text = "Dark Mode";
             this.radioButton3.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(237, 100);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(55, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Tab Size: ";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(296, 98);
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown1.TabIndex = 10;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioButton5);
+            this.groupBox3.Controls.Add(this.radioButton6);
+            this.groupBox3.Location = new System.Drawing.Point(12, 78);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(220, 60);
+            this.groupBox3.TabIndex = 11;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Mode";
+            // 
+            // radioButton5
+            // 
+            this.radioButton5.AutoSize = true;
+            this.radioButton5.Location = new System.Drawing.Point(99, 20);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(52, 17);
+            this.radioButton5.TabIndex = 1;
+            this.radioButton5.Text = "Editor";
+            this.radioButton5.UseVisualStyleBackColor = true;
+            // 
+            // radioButton6
+            // 
+            this.radioButton6.AutoSize = true;
+            this.radioButton6.Location = new System.Drawing.Point(7, 20);
+            this.radioButton6.Name = "radioButton6";
+            this.radioButton6.Size = new System.Drawing.Size(58, 17);
+            this.radioButton6.TabIndex = 0;
+            this.radioButton6.Text = "Project";
+            this.radioButton6.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(58, 144);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(114, 23);
+            this.button4.TabIndex = 12;
+            this.button4.Text = "Manage Libraries";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(341, 175);
+            this.ClientSize = new System.Drawing.Size(472, 178);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button3);
@@ -151,7 +230,11 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -166,5 +249,11 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton radioButton5;
+        private System.Windows.Forms.RadioButton radioButton6;
+        private System.Windows.Forms.Button button4;
     }
 }

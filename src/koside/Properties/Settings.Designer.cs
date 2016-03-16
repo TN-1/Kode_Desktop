@@ -81,5 +81,40 @@ namespace koside.Properties {
                 this["Uppercase"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4")]
+        public int tabsize {
+            get {
+                return ((int)(this["tabsize"]));
+            }
+            set {
+                this["tabsize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool mode {
+            get {
+                return ((bool)(this["mode"]));
+            }
+            set {
+                this["mode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Collections.Generic.List<System.String> libs {
+            get {
+                return ((global::System.Collections.Generic.List<System.String>)(this["libs"]));
+            }
+            set {
+                this["libs"] = value;
+            }
+        }
     }
 }
