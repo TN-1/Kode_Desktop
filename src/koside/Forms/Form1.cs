@@ -6,6 +6,7 @@ using ScintillaNET;
 using System.IO;
 using System.Xml;
 using System.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace koside
 {
@@ -211,6 +212,7 @@ namespace koside
                 Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
                 //Line number check
                 toolStripStatusLabel1.Text = "Line: " + (body.CurrentLine + 1).ToString();
+                toolStripStatusLabel2.Text = "Column: " + body.GetColumn(body.CurrentPosition).ToString();
 
                 //Brace highlighting
                 // Has the caret changed position?
@@ -1171,7 +1173,7 @@ namespace koside
                 tabControl1.Refresh();
                 Save();
             }
-            catch(Exception ex)
+            catch
             {
                 addTab();
                 Open();
@@ -1620,6 +1622,8 @@ namespace koside
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
+            int i = tabControl1.SelectedIndex;
+
             if (keyData == (Keys.Control | Keys.S))
             {
                 Save();
@@ -1663,6 +1667,90 @@ namespace koside
                     body.SelectAll();
                 }
                 return true;
+            }
+            if(keyData == (Keys.Control | Keys.Tab))
+            {
+                i++;
+                tabControl1.SelectedIndex = i;
+                tabControl1.SelectedIndex = tabControl1.SelectedIndex - 1;
+            }
+            if (keyData == (Keys.Control | Keys.Shift | Keys.Tab))
+            {
+                i--;
+                tabControl1.SelectedIndex = i;
+                tabControl1.SelectedIndex = tabControl1.SelectedIndex + 1;
+            }
+            if(keyData == (Keys.Control | Keys.NumPad1))
+            {
+                tabControl1.SelectedIndex = 0;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad2))
+            {
+                tabControl1.SelectedIndex = 1;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad3))
+            {
+                tabControl1.SelectedIndex = 2;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad4))
+            {
+                tabControl1.SelectedIndex = 3;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad5))
+            {
+                tabControl1.SelectedIndex = 4;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad6))
+            {
+                tabControl1.SelectedIndex = 5;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad7))
+            {
+                tabControl1.SelectedIndex = 6;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad8))
+            {
+                tabControl1.SelectedIndex = 7;
+            }
+            if (keyData == (Keys.Control | Keys.NumPad9))
+            {
+                tabControl1.SelectedIndex = 8;
+            }
+            if (keyData == (Keys.Control | Keys.D1))
+            {
+                tabControl1.SelectedIndex = 0;
+            }
+            if (keyData == (Keys.Control | Keys.D2))
+            {
+                tabControl1.SelectedIndex = 1;
+            }
+            if (keyData == (Keys.Control | Keys.D3))
+            {
+                tabControl1.SelectedIndex = 2;
+            }
+            if (keyData == (Keys.Control | Keys.D4))
+            {
+                tabControl1.SelectedIndex = 3;
+            }
+            if (keyData == (Keys.Control | Keys.D5))
+            {
+                tabControl1.SelectedIndex = 4;
+            }
+            if (keyData == (Keys.Control | Keys.D6))
+            {
+                tabControl1.SelectedIndex = 5;
+            }
+            if (keyData == (Keys.Control | Keys.D7))
+            {
+                tabControl1.SelectedIndex = 6;
+            }
+            if (keyData == (Keys.Control | Keys.D8))
+            {
+                tabControl1.SelectedIndex = 7;
+            }
+            if (keyData == (Keys.Control | Keys.D9))
+            {
+                tabControl1.SelectedIndex = 8;
             }
             return base.ProcessCmdKey(ref msg, keyData);
         }
