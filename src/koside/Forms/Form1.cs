@@ -631,7 +631,7 @@ namespace koside
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), Minimiser.Minimise(body.Text));
-                    file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
+                    file_name[i] = saveFileDialog1.FileName.ToString();
                     tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
                 }
             }
@@ -677,32 +677,36 @@ namespace koside
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             SaveAll();
-
-            List<string> files = new List<string>();
-            string[] s = Directory.GetFiles(ProjRootDir, "*", SearchOption.AllDirectories);
-            
-            foreach(string s1 in s)
+            if (Properties.Settings.Default.mode == true)
             {
-                if (s1.Contains("NoExport") != true)
-                {
-                    files.Add(s1);
-                }
-            }
-            foreach(string s2 in files)
-            {
-                string s3 = Path.GetFileName(s2);
-                s3 = Path.Combine(CurrentInstall, "Ships", "Script", s3);
-                try
-                {
-                    File.Copy(s2, s3, true);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("File: " + s2 + " Failed to copy. Error: " + ex);
-                }
-            }
+                List<string> files = new List<string>();
+                string[] s = Directory.GetFiles(ProjRootDir, "*", SearchOption.AllDirectories);
 
-            MessageBox.Show("Project succesfully exported");
+                foreach (string s1 in s)
+                {
+                    if (s1.Contains("NoExport") != true)
+                    {
+                        files.Add(s1);
+                    }
+                }
+                foreach (string s2 in files)
+                {
+                    string s3 = Path.GetFileName(s2);
+                    s3 = Path.Combine(CurrentInstall, "Ships", "Script", s3);
+                    try
+                    {
+                        File.Copy(s2, s3, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("File: " + s2 + " Failed to copy. Error: " + ex);
+                    }
+                }
+
+                MessageBox.Show("Project succesfully exported");
+            }else
+            {
+            }
         }
 
         private void NewButton_Click(object sender, EventArgs e)
@@ -1035,7 +1039,7 @@ namespace koside
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
                     System.IO.File.WriteAllText(saveFileDialog1.FileName.ToString(), body.Text);
-                    file_name[i] = Path.GetFileNameWithoutExtension(saveFileDialog1.FileName.ToString());
+                    file_name[i] = saveFileDialog1.FileName.ToString();
                     tabControl1.SelectedTab.Text = Path.GetFileNameWithoutExtension(file_name[i]) + ".ks        X";
                 }
             }
