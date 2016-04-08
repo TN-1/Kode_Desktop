@@ -277,10 +277,7 @@ namespace koside
                 var lenEntered = currentPos - wordStartPos;
                 if (lenEntered > 0)
                 {
-                    if (Properties.Settings.Default.Uppercase == true)
-                        body.AutoCShow(lenEntered, Keywords.FullUpper());
-                    else
-                        body.AutoCShow(lenEntered, Keywords.FullLower());
+                    body.AutoCShow(lenEntered, Keywords.Key0());
                 }
 
                 if (charcount[i] == 10)
@@ -1241,16 +1238,9 @@ namespace koside
             body.Lexer = Lexer.Cpp;
 
             // Set the keywords. 0 is functions, 1 is variables
-            if (Properties.Settings.Default.Uppercase == true)
-            {
-                body.SetKeywords(0, Keywords.Upper(0));
-                body.SetKeywords(1, Keywords.Upper(1));
-            }
-            else if (Properties.Settings.Default.Uppercase == false)
-            {
-                body.SetKeywords(0, Keywords.Lower(0));
-                body.SetKeywords(1, Keywords.Lower(1));
-            }
+            body.SetKeywords(0, Keywords.Key0());
+            body.SetKeywords(1, Keywords.Key1());
+
             body.CaretLineBackColor = Color.White;
             body.CaretForeColor = ForeColorVar;
 
@@ -1326,26 +1316,31 @@ namespace koside
 
         private void createXML()
         {
-            XmlTextWriter writer = new XmlTextWriter("KodeCache.xml", System.Text.Encoding.UTF8);
-            writer.WriteStartDocument(true);
-            writer.Formatting = Formatting.Indented;
-            writer.Indentation = 2;
-            writer.WriteStartElement("Kode_Cache");
-            for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
+            if (Properties.Settings.Default.mode == false)
             {
-                tabControl1.SelectedIndex = i;
-                string s = tabControl1.SelectedTab.Text;
-                s = s.Remove(s.Length - 11);
-                s += "        X";
-                if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                XmlTextWriter writer = new XmlTextWriter("KodeCache.xml", System.Text.Encoding.UTF8);
+                writer.WriteStartDocument(true);
+                writer.Formatting = Formatting.Indented;
+                writer.Indentation = 2;
+                writer.WriteStartElement("Kode_Cache");
+                for (int i = 0; i < this.tabControl1.TabPages.Count; i++)
                 {
-                    Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
-                    createNode(tabControl1.SelectedIndex.ToString(), s, body.Text, file_name[i], writer);
+                    tabControl1.SelectedIndex = i;
+                    string s = tabControl1.SelectedTab.Text;
+                    s = s.Remove(s.Length - 11);
+                    s += "        X";
+                    if (tabControl1.SelectedTab.Controls.ContainsKey("body"))
+                    {
+                        Scintilla body = (Scintilla)tabControl1.SelectedTab.Controls["body"];
+                        createNode(tabControl1.SelectedIndex.ToString(), s, body.Text, file_name[i], writer);
+                    }
                 }
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Close();
             }
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
-            writer.Close();
+            else
+                SaveAll();
         }
 
         private void RestoreSession()
@@ -1782,37 +1777,17 @@ namespace koside
 
     class Keywords
     {
-        static private string key0 = "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN";
-        static private string key1 = "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME";
+        static private string key0 = "ADD ALL AT BATCH BREAK CLEARSCREEN COMPILE COPY DECLARE DELETE DEPLOY DO DO EDIT ELSE FILE FOR FROM FROM FUNCTION GLOBAL IF IN LIST LOCAL LOCK LOG OFF ON ONCE PARAMETER PRESERVE PRINT REBOOT REMOVE RENAME RUN SET SHUTDOWN STAGE STEP SWITCH THEN TO TOGGLE UNLOCK UNSET UNTIL VOLUME WAIT WHEN add all at batch break clearscreen compile copy declare delete deploy do do edit else file for from from function global if in list local lock log off on once parameter preserve print reboot remove rename run set shutdown stage step switch then to toggle unlock unset until volume wait when Add All At Batch Break Clearscreen Compile Copy Declare Delete Deploy Do Do Edit Else File For From From Function Global If In List Local Lock Log Off On Once Parameter Preserve Print Reboot Remove Rename Run Set Shutdown Stage Step Switch Then To Toggle Unlock Unset Until Volume Wait When";
+        static private string key1 = "HEADING PROGRADE RETROGRADE FACING MAXTHRUST VELOCITY GEOPOSITION LATITUDE LONGITUDE UP NORTH BODY ANGULARMOMENTUM ANGULARVEL ANGULARVELOCITY COMMRANGE MASS VERTICALSPEED GROUNDSPEED AIRESPEED VESSELNAME ALTITUDE APOAPSIS PERIAPSIS SENSORS SRFPROGRADE SRFREROGRADE OBT STATUS SHIPNAME heading prograde retrograde facing maxthrust velocity geoposition latitude longitude up north body angularmomentum angularvel angularvelocity commrange mass verticalspeed groundspeed airespeed vesselname altitude apoapsis periapsis sensors srfprograde srfrerograde obt status shipname Heading Prograde Retrograde Facing Maxhrust Velocity Geoposition Latitude Longitude Up North Body Angularmomentum Angularvel Angularvelocity Commrange Mass Verticalspeed Groundspeed Airespeed Vesselname Altitude Apoapsis Periapsis Sensors Srfprograde Srfrerograde Obt Status Shipname";
 
-        static public string Upper(int index)
+        static public string Key0()
         {
-            if (index == 0)
-                return key0.ToUpper();
-            if (index == 1)
-                return key1.ToUpper();
-            return null;   
+            return key0;  
         }
 
-        static public string Lower(int index)
+        static public string Key1()
         {
-            if (index == 0)
-                return key0.ToLower();
-            if (index == 1)
-                return key1.ToLower();
-            return null;
-        }
-
-        static public string FullUpper()
-        {
-            string s = key0 + " " + key1;
-            return s.ToUpper();
-        }
-
-        static public string FullLower()
-        {
-            string s = key0 + " " + key1;
-            return s.ToLower();
+            return key1;
         }
     }
 }

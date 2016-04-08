@@ -14,10 +14,10 @@ namespace koside
                 radioButton4.Checked = true;
             else
                 radioButton3.Checked = true;
-            if (Properties.Settings.Default.Uppercase == true)
-                radioButton1.Checked = true;
-            else
-                radioButton2.Checked = true;
+            //if (Properties.Settings.Default.Uppercase == true)
+            //    radioButton1.Checked = true;
+            //else
+            //    radioButton2.Checked = true;
             if (Properties.Settings.Default.mode == false)
                 radioButton5.Checked = true;
             else
