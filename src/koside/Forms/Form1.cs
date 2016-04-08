@@ -147,7 +147,13 @@ namespace koside
                     else
                     {
                         //Default to Proj mode
-                        ParseKSProj(file);
+                        if (Properties.Settings.Default.mode == true)
+                            ParseKSProj(file);
+                        else
+                        {
+                            RemoveTree();
+                            addTab();
+                        }
                     }
                 }
             }
@@ -449,12 +455,7 @@ namespace koside
                     }
                     if (Properties.Settings.Default.mode != yetanothertest)
                     {
-                        DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
-                        if (result == DialogResult.OK)
-                        {
-                            createXML();
-                            Application.Restart();
-                        }
+                        DialogResult result = MessageBox.Show("Kode needs to be manually restarted for the changes to take effect");
                     }
 
                     toolStripComboBox1.Items.Clear();
@@ -512,12 +513,7 @@ namespace koside
                 }
                 if (Properties.Settings.Default.mode != yetanothertest)
                 {
-                    DialogResult result = MessageBox.Show("We need to restart Kode. Dont worry, You wont lose your work");
-                    if (result == DialogResult.OK)
-                    {
-                        createXML();
-                        Application.Restart();
-                    }
+                    DialogResult result = MessageBox.Show("Kode needs to be manually restarted for the changes to take effect");
                 }
 
                 toolStripComboBox1.Items.Clear();
