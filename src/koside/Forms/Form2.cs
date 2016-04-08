@@ -52,6 +52,8 @@ namespace koside
             Properties.Settings.Default.tabsize = Convert.ToInt32(numericUpDown1.Value);
                 
             Properties.Settings.Default.Save();
+            Properties.Settings.Default.Upgrade();
+            Properties.Settings.Default.Save();
             this.Close();
         }
 

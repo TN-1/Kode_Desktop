@@ -1517,7 +1517,12 @@ namespace koside
                 directoryNode.Nodes.Add(CreateDirectoryNode(directory));
             foreach (var file in directoryInfo.GetFiles())
                 if(!file.ToString().Contains(".ksproj"))
-                    directoryNode.Nodes.Add(new TreeNode(file.Name, 1, 1));
+                {
+                    if(Properties.Settings.Default.DarkMode == true)
+                        directoryNode.Nodes.Add(new TreeNode(file.Name, 3, 3));
+                    else
+                        directoryNode.Nodes.Add(new TreeNode(file.Name, 1, 1));
+                }
             return directoryNode;
         }
 

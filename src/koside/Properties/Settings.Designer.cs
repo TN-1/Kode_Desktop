@@ -116,5 +116,17 @@ namespace koside.Properties {
                 this["libs"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool restart {
+            get {
+                return ((bool)(this["restart"]));
+            }
+            set {
+                this["restart"] = value;
+            }
+        }
     }
 }

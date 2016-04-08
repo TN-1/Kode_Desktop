@@ -213,6 +213,7 @@
     <None Include="Resources\Folder_6221.png" />
     <Content Include="Resources\jeb2.jpg" />
     <None Include="Resources\KSFile.png" />
+    <None Include="Resources\KSFileNight.png" />
     <Content Include="Resources\KSP.png" />
     <Content Include="Resources\KSPDark.png" />
     <Content Include="Resources\monitor_minimal.ico" />
