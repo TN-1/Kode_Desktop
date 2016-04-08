@@ -1,8 +1,8 @@
 [Desktop Entry]
 Encoding=UTF-8
-Version=0.3
+Version=0.5
 Name=Kode
-Icon=~/.wine/drive_c/Program\ Files/Kode/icon.png
+Icon=~/.kode/drive_c/Program\ Files/Kode/icon.png
 Exec=/bin/kode
 Terminal=false
 Type=Application

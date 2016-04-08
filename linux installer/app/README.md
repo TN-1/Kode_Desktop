@@ -1,1 +1,0 @@
-This folder will contain .exe and .dll's at release time. Keep clean on repo.

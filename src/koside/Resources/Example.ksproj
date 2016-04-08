@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ksproj>
+  <metadata>
+    <projname>Example</projname> 
+    <rootdir>C:\Users\hamis\Documents\Kode Projects\ExampleProject</rootdir> 
+    <formatversion>0.1</formatversion> 
+    <kodeversion>0.5.0.0</kodeversion> 
+    <minimumversion>0.5.0.0</minimumversion> 
+  </metadata>
+  <settings>
+    <settings>
+      <selectedindex>1</selectedindex>
+      <selectedinstall>I:\SteamLinux.Newname\steamapps\common\Kerbal Space Program</selectedinstall>
+    </settings>
+  </settings>
+  <tabs>
+    <tab>
+      <index>0</index>
+      <title>Title        X</title>
+      <file_name>file</file_name>
+    </tab>
+    <tab>
+      <index>1</index>
+      <title>1Title        X</title>
+      <file_name>1file</file_name>
+    </tab>
+    <tab>
+      <index>2</index>
+      <title>NE2.ks        X</title>
+      <file_name>C:\Users\hamis\Documents\ExampleProject\NE2.ks</file_name>
+    </tab>
+  </tabs>
+  <libraries>
+  </libraries>
+</ksproj>

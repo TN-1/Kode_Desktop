@@ -9,10 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>koside</RootNamespace>
     <AssemblyName>Kode</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <PublishUrl>publish\</PublishUrl>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>C:\KodePub\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -22,12 +24,15 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <SupportUrl>https://github.com/TN-1/Kode/issues</SupportUrl>
+    <ProductName>Kode</ProductName>
+    <PublisherName>Hamish West</PublisherName>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>0.5.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,6 +63,24 @@
   <PropertyGroup>
     <ApplicationIcon>Resources\monitor_minimal.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>583B665DAF38A92312717370C91D3DB9D0E60811</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>koside_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="ScintillaNET, Version=3.5.6.0, Culture=neutral, processorArchitecture=MSIL">
@@ -73,7 +96,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TabControlEX">
@@ -81,6 +103,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\KsprojTools.cs" />
     <Compile Include="Forms\AboutBox1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -121,6 +144,18 @@
     <Compile Include="Classes\KSPPathTools.cs" />
     <Compile Include="Classes\Minimiser.cs" />
     <Compile Include="Classes\Program.cs" />
+    <Compile Include="Forms\Libraries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Libraries.Designer.cs">
+      <DependentUpon>Libraries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\NewProject.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\NewProject.Designer.cs">
+      <DependentUpon>NewProject.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Setup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -146,6 +181,12 @@
     <EmbeddedResource Include="Forms\Form5.resx">
       <DependentUpon>Form5.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Libraries.resx">
+      <DependentUpon>Libraries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\NewProject.resx">
+      <DependentUpon>NewProject.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Setup.resx">
       <DependentUpon>Setup.cs</DependentUpon>
     </EmbeddedResource>
@@ -154,10 +195,36 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="koside_TemporaryKey.pfx" />
+    <Content Include="Libraries\ascent.ks" />
+    <Content Include="Libraries\docking.ks" />
+    <Content Include="Libraries\lib_circle_nav.ks" />
+    <Content Include="Libraries\lib_enum.ks" />
+    <Content Include="Libraries\lib_exec.ks" />
+    <Content Include="Libraries\lib_file_exists.ks" />
+    <Content Include="Libraries\lib_gui_box.ks" />
+    <Content Include="Libraries\lib_input_string.ks" />
+    <Content Include="Libraries\lib_lazcalc.ks" />
+    <Content Include="Libraries\lib_list_dialog.ks" />
+    <Content Include="Libraries\lib_menu.ks" />
+    <Content Include="Libraries\lib_navball.ks" />
+    <Content Include="Libraries\lib_number_dialog.ks" />
+    <Content Include="Libraries\lib_num_to_str.ks" />
+    <Content Include="Libraries\lib_pid.ks" />
+    <Content Include="Libraries\lib_raw_user_input.ks" />
+    <Content Include="Libraries\lib_realchute.ks" />
+    <Content Include="Libraries\lib_running_average_filter.ks" />
+    <Content Include="Libraries\lib_seven_seg.ks" />
+    <Content Include="Libraries\lib_str_to_num.ks" />
+    <Content Include="Libraries\lib_term.ks" />
+    <Content Include="Libraries\maneuver.ks" />
+    <Content Include="Libraries\rendezvous.ks" />
     <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </None>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -174,9 +241,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -187,11 +254,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\CopyNight.png" />
+    <Content Include="KSFile.ico" />
     <Content Include="Resources\Copy_6524.png" />
     <None Include="Resources\CutNight.png" />
     <Content Include="Resources\Cut_6523.png" />
+    <None Include="Resources\Folder_6222.png" />
+    <None Include="Resources\Folder_6221.png" />
     <Content Include="Resources\jeb2.jpg" />
+    <None Include="Resources\KSFile.png" />
+    <None Include="Resources\KSFileNight.png" />
+    <Content Include="Resources\KSP.png" />
+    <Content Include="Resources\KSPDark.png" />
     <Content Include="Resources\monitor_minimal.ico" />
+    <None Include="Resources\Example.ksproj">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\NewFileNight.png" />
     <Content Include="Resources\NewFile_6276.png" />
     <None Include="Resources\OpenNight.png" />
@@ -207,6 +284,21 @@
     <None Include="Resources\UndoNight.png" />
     <Content Include="Resources\Undo_16x.png" />
   </ItemGroup>
+  <ItemGroup>
+    <FileAssociation Include=".ks">
+      <Visible>False</Visible>
+      <Description>Kerboscript File</Description>
+      <Progid>ks10832</Progid>
+      <DefaultIcon>KSFile.ico</DefaultIcon>
+    </FileAssociation>
+    <FileAssociation Include=".ksproj">
+      <Visible>False</Visible>
+      <Description>Kode Project File</Description>
+      <Progid>ks1083</Progid>
+      <DefaultIcon>Resources\monitor_minimal.ico</DefaultIcon>
+    </FileAssociation>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
