@@ -1105,7 +1105,10 @@ namespace koside
                         //Open a file
                         OpenFileDialog theDialog = new OpenFileDialog();
                         theDialog.Title = "Open Script";
-                        theDialog.Filter = "kOS Scripts|*.ks|Kode Project Files|*.ksproj";
+                        if(Properties.Settings.Default.mode == true)
+                            theDialog.Filter = "Kode Project Files|*.ksproj|kOS Scripts|*.ks";
+                        else
+                            theDialog.Filter = "kOS Scripts|*.ks|Kode Project Files|*.ksproj";
                         theDialog.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                         if (theDialog.ShowDialog() == DialogResult.OK)
                         {
@@ -1140,7 +1143,10 @@ namespace koside
                             //Open a file
                             OpenFileDialog theDialogi = new OpenFileDialog();
                             theDialogi.Title = "Open Script";
-                            theDialogi.Filter = "kOS Scripts|*.ks|Kode Project Files|*.ksproj";
+                            if (Properties.Settings.Default.mode == true)
+                                theDialogi.Filter = "Kode Project Files|*.ksproj|kOS Scripts|*.ks";
+                            else
+                                theDialogi.Filter = "kOS Scripts|*.ks|Kode Project Files|*.ksproj";
                             theDialogi.InitialDirectory = Path.Combine(CurrentInstall, "Ships", "Script");
                             if (theDialogi.ShowDialog() == DialogResult.OK)
                             {

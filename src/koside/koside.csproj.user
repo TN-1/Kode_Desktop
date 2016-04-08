@@ -4,4 +4,14 @@
     <StartArguments>
     </StartArguments>
   </PropertyGroup>
+  <PropertyGroup>
+    <PublishUrlHistory>C:\KodePub\|publish\</PublishUrlHistory>
+    <InstallUrlHistory />
+    <SupportUrlHistory>https://github.com/TN-1/Kode/issues</SupportUrlHistory>
+    <UpdateUrlHistory />
+    <BootstrapperUrlHistory />
+    <ErrorReportUrlHistory />
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
+  </PropertyGroup>
 </Project>
