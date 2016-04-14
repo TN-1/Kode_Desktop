@@ -6,7 +6,6 @@ using ScintillaNET;
 using System.IO;
 using System.Xml;
 using System.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace koside
 {
@@ -23,7 +22,7 @@ namespace koside
         string ProjRootDir;
         string ProjFile;
         int lastCaretPos = 0;
-        int TabSize;
+        int TabSize;        
 
         public Form1(string file)
         {
@@ -71,7 +70,6 @@ namespace koside
 
             tabControl1.BackColor = BackColorVar;
             tabControl1.ForeColor = ForeColorVar;
-
             menuStrip1.BackColor = BackColorVar;
             menuStrip1.ForeColor = ForeColorVar;
             statusStrip1.BackColor = BackColorVar;
@@ -83,6 +81,8 @@ namespace koside
             ForeColor = ForeColorVar;
             treeView1.BackColor = BackColorVar;
             treeView1.ForeColor = ForeColorVar;
+            richTextBox1.BackColor = BackColorVar;
+            richTextBox1.ForeColor = ForeColorVar;
 
             toolStrip1.Renderer = new MySR();
 
@@ -195,6 +195,11 @@ namespace koside
                 int i = tabControl1.SelectedIndex;
                 if (ismodified[i] == false)
                     ismodified[i] = true;
+
+                richTextBox1.Clear();
+                List<string> errors = KSValidator.Program.PrintErrors(body.Text);
+                foreach (string s in errors)
+                    richTextBox1.Text += s + "\n";
             }
         }
 

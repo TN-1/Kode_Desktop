@@ -298,7 +298,12 @@
       <DefaultIcon>Resources\monitor_minimal.ico</DefaultIcon>
     </FileAssociation>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\KSTools\KSValidator\KSValidator.csproj">
+      <Project>{08d1c7a8-d13d-41ae-89ba-86124114b918}</Project>
+      <Name>KSValidator</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
