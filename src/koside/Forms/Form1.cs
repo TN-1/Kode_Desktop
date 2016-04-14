@@ -16,8 +16,8 @@ namespace koside
         List<bool> hasstar = new List<bool>();
         List<int> charcount = new List<int>();
         List<int> tabcount = new List<int>();
-        Color BackColorVar;
-        Color ForeColorVar;
+        public static Color BackColorVar;
+        public static Color ForeColorVar;
         string CurrentInstall;
         string ProjRootDir;
         string ProjFile;
@@ -85,6 +85,7 @@ namespace koside
             richTextBox1.ForeColor = ForeColorVar;
 
             toolStrip1.Renderer = new MySR();
+            menuStrip1.Renderer = new MyRenderer();
 
             if (Properties.Settings.Default.KSPLoc.Count == -1)
             {
@@ -1179,7 +1180,7 @@ namespace koside
                     }
                 }
                 tabControl1.Refresh();
-                Save();
+                //Save();
             }
             catch
             {
@@ -1764,6 +1765,17 @@ namespace koside
                 tabControl1.SelectedIndex = 8;
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private class MyRenderer : ToolStripProfessionalRenderer
+        {
+            protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
+            {
+                Rectangle rc = new Rectangle(Point.Empty, e.Item.Size);
+                Color c = e.Item.Selected ? ForeColorVar : BackColorVar;
+                using (SolidBrush brush = new SolidBrush(c))
+                    e.Graphics.FillRectangle(brush, rc);
+            }
         }
 
     }
