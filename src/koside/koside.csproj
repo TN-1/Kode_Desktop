@@ -99,7 +99,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="TabControlEX">
-      <HintPath>C:\Users\hamis\Downloads\TabControlEX\TabControlEX.dll</HintPath>
+      <HintPath>..\lib\TabControlEX.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -299,7 +299,7 @@
     </FileAssociation>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\KSTools\KSValidator\KSValidator.csproj">
+    <ProjectReference Include="..\KSValidator\KSValidator.csproj">
       <Project>{08d1c7a8-d13d-41ae-89ba-86124114b918}</Project>
       <Name>KSValidator</Name>
     </ProjectReference>
