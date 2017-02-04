@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "koside", "koside\koside.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kOSMinimiser", "kOSMinimiser\kOSMinimiser.csproj", "{4B417E9B-11D8-46B5-9D47-F36D4008B128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSValidator", "..\..\KSTools\KSValidator\KSValidator.csproj", "{08D1C7A8-D13D-41AE-89BA-86124114B918}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSValidator", "KSValidator\KSValidator.csproj", "{08D1C7A8-D13D-41AE-89BA-86124114B918}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
